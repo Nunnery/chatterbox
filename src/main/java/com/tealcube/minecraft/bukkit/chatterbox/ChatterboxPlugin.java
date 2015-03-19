@@ -57,7 +57,6 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         String newFormat = easyTitles.formatMessage(player);
         newFormat = String.format(newFormat, player.getDisplayName(), message);
         List<String> splitMessage = Splitter.on(PATTERN).splitToList(newFormat);
-        Bukkit.getLogger().info("size: " + splitMessage.size());
         if (splitMessage.size() <= 1) {
             for (Player p : receivers) {
                 p.sendMessage(newFormat);
