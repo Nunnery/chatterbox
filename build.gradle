@@ -28,7 +28,7 @@ repositories {
 
 dependencies {
     compile "com.tealcube.minecraft.bukkit:facecore-all:1.0.0-SNAPSHOT"
-    compile files("/lib/EasyTitles.jar")
+    compile files("lib/EasyTitles.jar")
 }
 
 processResources {
