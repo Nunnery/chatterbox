@@ -15,6 +15,7 @@
 package com.tealcube.minecraft.bukkit.chatterbox;
 
 import com.tealcube.minecraft.bukkit.facecore.plugin.FacePlugin;
+import com.tealcube.minecraft.bukkit.facecore.shade.apache.commons.validator.routines.UrlValidator;
 import com.tealcube.minecraft.bukkit.facecore.shade.hilt.HiltItemStack;
 import com.tealcube.minecraft.bukkit.facecore.utilities.TextUtils;
 import com.tealcube.minecraft.bukkit.kern.fanciful.FancyMessage;
@@ -43,6 +44,7 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
     private EasyTitles easyTitles;
     private TribesPlugin tribesPlugin;
     private Chat chat;
+    private UrlValidator validator;
 
     @Override
     public void enable() {
@@ -53,6 +55,7 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         }
         tribesPlugin = (TribesPlugin) Bukkit.getPluginManager().getPlugin("Tribes");
         getServer().getPluginManager().registerEvents(this, this);
+        validator = new UrlValidator();
     }
 
     private boolean setupChat() {
@@ -140,6 +143,8 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
                 } else {
                     messageParts.then("nothing");
                 }
+            } else if (validator.isValid(str)) {
+                messageParts.then(s.length() > 12 ? s.substring(0, 12) : s).link(str);
             } else {
                 messageParts.then(TextUtils.color(color + s));
             }
