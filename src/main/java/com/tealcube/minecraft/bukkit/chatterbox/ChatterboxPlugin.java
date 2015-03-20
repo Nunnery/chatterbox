@@ -78,7 +78,6 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         String newFormat = easyTitles.formatMessage(player);
         newFormat = String.format(newFormat, player.getDisplayName(), message);
         List<String> splitMessage = Splitter.on(" ").splitToList(newFormat);
-        Bukkit.getLogger().info("Chatterbox handling chat: " + splitMessage.size());
         FancyMessage messageParts = new FancyMessage("");
         ItemStack hand = player.getEquipment().getItemInHand();
         HiltItemStack hHand = (hand != null && hand.getType() != Material.AIR) ? new HiltItemStack(hand) : null;
