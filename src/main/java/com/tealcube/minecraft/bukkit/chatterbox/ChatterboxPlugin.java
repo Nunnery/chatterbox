@@ -97,45 +97,50 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         if (member.getTribe() != null) {
             tribe = tribesPlugin.getTribeManager().getTribe(member.getTribe()).orNull();
         }
+        ChatColor color = ChatColor.GRAY;
         for (int i = 0; i < splitMessage.size(); i++) {
-            String s = splitMessage.get(i);
-            if (ChatColor.stripColor(s).equalsIgnoreCase(player.getDisplayName() + ":")) {
+            if (i == 2) {
+                color = ChatColor.getByChar(splitMessage.get(i).substring(1, 2));
+            }
+            String s = ChatColor.stripColor(splitMessage.get(i));
+            if (s.equalsIgnoreCase(player.getDisplayName() + ":")) {
                 messageParts.then(s).tooltip(
                         ChatColor.WHITE + player.getName() + " - Level " + player.getLevel(),
                         ChatColor.GOLD + "Tribe: " + ChatColor.WHITE + (tribe != null ? tribe.getName() : "N/A"),
                         ChatColor.GOLD + "Rank: " + ChatColor.WHITE + chat.getPrimaryGroup(player));
             } else if (s.equalsIgnoreCase("{hand}")) {
                 if (hHand != null) {
-                    messageParts.then(hHand.getName()).itemTooltip(hHand);
+                    messageParts.then(hHand.getName().length() > 12 ? hHand.getName().substring(0, 12) : hHand.getName()).itemTooltip(hHand);
                 } else {
                     messageParts.then("nothing");
                 }
             } else if (s.equalsIgnoreCase("{helmet}") || s.equalsIgnoreCase("{head}")) {
                 if (hHelmet != null) {
-                    messageParts.then(hHelmet.getName()).itemTooltip(hHelmet);
+                    messageParts.then(hHelmet.getName().length() > 12 ? hHelmet.getName().substring(0, 12) : hHelmet.getName()).itemTooltip(hHelmet);
                 } else {
                     messageParts.then("nothing");
                 }
             } else if (s.equalsIgnoreCase("{chestplate}") || s.equalsIgnoreCase("{chest}")) {
                 if (hChest != null) {
-                    messageParts.then(hChest.getName()).itemTooltip(hChest);
+                    messageParts.then(hChest.getName().length() > 12 ? hChest.getName().substring(0, 12) : hChest.getName()).itemTooltip(hChest);
                 } else {
                     messageParts.then("nothing");
                 }
             } else if (s.equalsIgnoreCase("{leggings}") || s.equalsIgnoreCase("{legs}")) {
                 if (hLeggings != null) {
-                    messageParts.then(hLeggings.getName()).itemTooltip(hLeggings);
+                    messageParts.then(hLeggings.getName().length() > 12 ? hLeggings.getName().substring(0, 12) : hLeggings.getName()).itemTooltip
+                            (hLeggings);
                 } else {
                     messageParts.then("nothing");
                 }
             } else if (s.equalsIgnoreCase("{boots}") || s.equalsIgnoreCase("{feet}")) {
                 if (hBoots != null) {
-                    messageParts.then(hBoots.getName()).itemTooltip(hBoots);
+                    messageParts.then(hBoots.getName().length() > 12 ? hBoots.getName().substring(0, 12) : hBoots.getName()).itemTooltip(hBoots);
                 } else {
                     messageParts.then("nothing");
                 }
             } else {
-                messageParts.then(TextUtils.color(s));
+                messageParts.then(TextUtils.color(color + s));
             }
             if (i != splitMessage.size() - 1) {
                 messageParts.then(" ");
