@@ -16,9 +16,14 @@ package com.tealcube.minecraft.bukkit.chatterbox;
 
 import com.tealcube.minecraft.bukkit.facecore.plugin.FacePlugin;
 import com.tealcube.minecraft.bukkit.facecore.shade.hilt.HiltItemStack;
+import com.tealcube.minecraft.bukkit.facecore.utilities.TextUtils;
 import com.tealcube.minecraft.bukkit.kern.fanciful.FancyMessage;
 import com.tealcube.minecraft.bukkit.kern.shade.google.common.base.Splitter;
+import com.tealcube.minecraft.bukkit.tribes.TribesPlugin;
+import com.tealcube.minecraft.bukkit.tribes.data.Member;
+import com.tealcube.minecraft.bukkit.tribes.data.Tribe;
 import me.barryg.EasyTitles.EasyTitles;
+import net.milkbowl.vault.chat.Chat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -27,20 +32,36 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 public class ChatterboxPlugin extends FacePlugin implements Listener {
 
-    private static final Pattern PATTERN = Pattern.compile("\\{([Hh][Aa][Nn][Dd]*?)\\}");
     private EasyTitles easyTitles;
+    private TribesPlugin tribesPlugin;
+    private Chat chat;
 
     @Override
     public void enable() {
         easyTitles = (EasyTitles) Bukkit.getPluginManager().getPlugin("EasyTitles");
+        if (!setupChat()) {
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        tribesPlugin = (TribesPlugin) Bukkit.getPluginManager().getPlugin("Tribes");
         getServer().getPluginManager().registerEvents(this, this);
+    }
+
+    private boolean setupChat() {
+        RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
+        if (chatProvider != null) {
+            chat = chatProvider.getProvider();
+        }
+
+        return (chat != null);
     }
 
     @Override
@@ -56,22 +77,71 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         String message = event.getMessage();
         String newFormat = easyTitles.formatMessage(player);
         newFormat = String.format(newFormat, player.getDisplayName(), message);
-        List<String> splitMessage = Splitter.on(PATTERN).splitToList(newFormat);
-        if (splitMessage.size() <= 1) {
-            for (Player p : receivers) {
-                p.sendMessage(newFormat);
+        List<String> splitMessage = Splitter.on(" ").splitToList(newFormat);
+        Bukkit.getLogger().info("Chatterbox handling chat: " + splitMessage.size());
+        FancyMessage messageParts = new FancyMessage("");
+        ItemStack hand = player.getEquipment().getItemInHand();
+        HiltItemStack hHand = (hand != null && hand.getType() != Material.AIR) ? new HiltItemStack(hand) : null;
+        ItemStack helmet = player.getEquipment().getHelmet();
+        HiltItemStack hHelmet = (helmet != null && helmet.getType() != Material.AIR) ? new HiltItemStack(helmet) : null;
+        ItemStack chest = player.getEquipment().getChestplate();
+        HiltItemStack hChest = (chest != null && chest.getType() != Material.AIR) ? new HiltItemStack(chest) : null;
+        ItemStack leggings = player.getEquipment().getLeggings();
+        HiltItemStack hLeggings = (leggings != null && leggings.getType() != Material.AIR) ? new HiltItemStack(leggings) : null;
+        ItemStack boots = player.getEquipment().getBoots();
+        HiltItemStack hBoots = (boots != null && boots.getType() != Material.AIR) ? new HiltItemStack(boots) : null;
+        Member member = tribesPlugin.getMemberManager().getMember(player.getUniqueId()).or(new Member(player.getUniqueId()));
+        if (!tribesPlugin.getMemberManager().hasMember(member)) {
+            tribesPlugin.getMemberManager().addMember(member);
+        }
+        Tribe tribe = null;
+        if (member.getTribe() != null) {
+            tribe = tribesPlugin.getTribeManager().getTribe(member.getTribe()).orNull();
+        }
+        for (int i = 0; i < splitMessage.size(); i++) {
+            String s = splitMessage.get(i);
+            if (ChatColor.stripColor(s).equalsIgnoreCase(player.getDisplayName() + ":")) {
+                messageParts.then(s).tooltip(
+                        ChatColor.WHITE + player.getName() + " - Level " + player.getLevel(),
+                        ChatColor.GOLD + "Tribe: " + ChatColor.WHITE + (tribe != null ? tribe.getName() : "N/A"),
+                        ChatColor.GOLD + "Rank: " + ChatColor.WHITE + chat.getPrimaryGroup(player));
+            } else if (s.equalsIgnoreCase("{hand}")) {
+                if (hHand != null) {
+                    messageParts.then(hHand.getName()).itemTooltip(hHand);
+                } else {
+                    messageParts.then("nothing");
+                }
+            } else if (s.equalsIgnoreCase("{helmet}") || s.equalsIgnoreCase("{head}")) {
+                if (hHelmet != null) {
+                    messageParts.then(hHelmet.getName()).itemTooltip(hHelmet);
+                } else {
+                    messageParts.then("nothing");
+                }
+            } else if (s.equalsIgnoreCase("{chestplate}") || s.equalsIgnoreCase("{chest}")) {
+                if (hChest != null) {
+                    messageParts.then(hChest.getName()).itemTooltip(hChest);
+                } else {
+                    messageParts.then("nothing");
+                }
+            } else if (s.equalsIgnoreCase("{leggings}") || s.equalsIgnoreCase("{legs}")) {
+                if (hLeggings != null) {
+                    messageParts.then(hLeggings.getName()).itemTooltip(hLeggings);
+                } else {
+                    messageParts.then("nothing");
+                }
+            } else if (s.equalsIgnoreCase("{boots}") || s.equalsIgnoreCase("{feet}")) {
+                if (hBoots != null) {
+                    messageParts.then(hBoots.getName()).itemTooltip(hBoots);
+                } else {
+                    messageParts.then("nothing");
+                }
+            } else {
+                messageParts.then(TextUtils.color(s));
             }
-            Bukkit.getConsoleSender().sendMessage(newFormat);
-            return;
+            if (i != splitMessage.size() - 1) {
+                messageParts.then(" ");
+            }
         }
-        FancyMessage messageParts = new FancyMessage(splitMessage.get(0));
-        if (player.getItemInHand().getType() == Material.AIR) {
-            messageParts.then(ChatColor.WHITE + "AIR");
-        } else {
-            HiltItemStack his = new HiltItemStack(player.getItemInHand());
-            messageParts.then(his.getName()).itemTooltip(his);
-        }
-        messageParts.then(splitMessage.get(1));
         messageParts.send(Bukkit.getConsoleSender());
         messageParts.send(receivers);
     }
