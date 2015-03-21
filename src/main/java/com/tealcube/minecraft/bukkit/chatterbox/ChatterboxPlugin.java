@@ -114,32 +114,36 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
                         ChatColor.GOLD + "Rank: " + ChatColor.WHITE + chat.getPrimaryGroup(player));
             } else if (str.equalsIgnoreCase("{hand}")) {
                 if (hHand != null) {
-                    messageParts.then(hHand.getName().length() > 12 ? hHand.getName().substring(0, 12) : hHand.getName()).itemTooltip(hHand);
+                    messageParts.then(hHand.getName().length() > 12 ? hHand.getName().substring(0, 12) : hHand.getName()).itemTooltip(hHand).style
+                            (ChatColor.UNDERLINE);
                 } else {
                     messageParts.then("nothing");
                 }
             } else if (str.equalsIgnoreCase("{helmet}") || str.equalsIgnoreCase("{head}")) {
                 if (hHelmet != null) {
-                    messageParts.then(hHelmet.getName().length() > 12 ? hHelmet.getName().substring(0, 12) : hHelmet.getName()).itemTooltip(hHelmet);
+                    messageParts.then(hHelmet.getName().length() > 12 ? hHelmet.getName().substring(0, 12) : hHelmet.getName()).itemTooltip(hHelmet).style
+                            (ChatColor.UNDERLINE);
                 } else {
                     messageParts.then("nothing");
                 }
             } else if (str.equalsIgnoreCase("{chestplate}") || str.equalsIgnoreCase("{chest}")) {
                 if (hChest != null) {
-                    messageParts.then(hChest.getName().length() > 12 ? hChest.getName().substring(0, 12) : hChest.getName()).itemTooltip(hChest);
+                    messageParts.then(hChest.getName().length() > 12 ? hChest.getName().substring(0, 12) : hChest.getName()).itemTooltip(hChest).style
+                            (ChatColor.UNDERLINE);
                 } else {
                     messageParts.then("nothing");
                 }
             } else if (str.equalsIgnoreCase("{leggings}") || str.equalsIgnoreCase("{legs}")) {
                 if (hLeggings != null) {
                     messageParts.then(hLeggings.getName().length() > 12 ? hLeggings.getName().substring(0, 12) : hLeggings.getName()).itemTooltip
-                            (hLeggings);
+                            (hLeggings).style(ChatColor.UNDERLINE);
                 } else {
                     messageParts.then("nothing");
                 }
             } else if (str.equalsIgnoreCase("{boots}") || str.equalsIgnoreCase("{feet}")) {
                 if (hBoots != null) {
-                    messageParts.then(hBoots.getName().length() > 12 ? hBoots.getName().substring(0, 12) : hBoots.getName()).itemTooltip(hBoots);
+                    messageParts.then(hBoots.getName().length() > 12 ? hBoots.getName().substring(0, 12) : hBoots.getName()).itemTooltip(hBoots).style
+                            (ChatColor.UNDERLINE);
                 } else {
                     messageParts.then("nothing");
                 }
