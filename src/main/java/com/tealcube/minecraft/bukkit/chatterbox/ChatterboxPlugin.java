@@ -144,7 +144,7 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
                     messageParts.then("nothing");
                 }
             } else if (validator.isValid(str)) {
-                messageParts.then(s.length() > 12 ? s.substring(0, 12) : s).link(str);
+                messageParts.then(s.length() > 12 ? s.substring(0, 12) : s).color(ChatColor.AQUA).style(ChatColor.UNDERLINE).link(str);
             } else {
                 messageParts.then(TextUtils.color(color + s));
             }
