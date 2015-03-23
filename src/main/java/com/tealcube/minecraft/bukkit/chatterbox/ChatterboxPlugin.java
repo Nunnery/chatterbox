@@ -114,41 +114,38 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
                         ChatColor.GOLD + "Rank: " + ChatColor.WHITE + chat.getPrimaryGroup(player));
             } else if (str.equalsIgnoreCase("{hand}")) {
                 if (hHand != null) {
-                    messageParts.then(hHand.getName().length() > 12 ? hHand.getName().substring(0, 12) : hHand.getName()).itemTooltip(hHand).style
-                            (ChatColor.UNDERLINE);
+                    messageParts.then(hHand.getName().substring(0,2) + "item").itemTooltip(hHand).style(ChatColor.UNDERLINE);
                 } else {
                     messageParts.then("nothing");
                 }
             } else if (str.equalsIgnoreCase("{helmet}") || str.equalsIgnoreCase("{head}")) {
                 if (hHelmet != null) {
-                    messageParts.then(hHelmet.getName().length() > 12 ? hHelmet.getName().substring(0, 12) : hHelmet.getName()).itemTooltip(hHelmet).style
-                            (ChatColor.UNDERLINE);
+                    messageParts.then(hHelmet.getName().substring(0,2) + "item").itemTooltip(hHelmet).style(ChatColor.UNDERLINE);
                 } else {
                     messageParts.then("nothing");
                 }
             } else if (str.equalsIgnoreCase("{chestplate}") || str.equalsIgnoreCase("{chest}")) {
                 if (hChest != null) {
-                    messageParts.then(hChest.getName().length() > 12 ? hChest.getName().substring(0, 12) : hChest.getName()).itemTooltip(hChest).style
-                            (ChatColor.UNDERLINE);
+                    messageParts.then(hChest.getName().substring(0,2) + "item").itemTooltip(hChest).style(ChatColor.UNDERLINE);
                 } else {
                     messageParts.then("nothing");
                 }
             } else if (str.equalsIgnoreCase("{leggings}") || str.equalsIgnoreCase("{legs}")) {
                 if (hLeggings != null) {
-                    messageParts.then(hLeggings.getName().length() > 12 ? hLeggings.getName().substring(0, 12) : hLeggings.getName()).itemTooltip
-                            (hLeggings).style(ChatColor.UNDERLINE);
+                    messageParts.then(hLeggings.getName().substring(0,2) + "item").itemTooltip(hLeggings).style(ChatColor.UNDERLINE);
                 } else {
                     messageParts.then("nothing");
                 }
             } else if (str.equalsIgnoreCase("{boots}") || str.equalsIgnoreCase("{feet}")) {
                 if (hBoots != null) {
-                    messageParts.then(hBoots.getName().length() > 12 ? hBoots.getName().substring(0, 12) : hBoots.getName()).itemTooltip(hBoots).style
-                            (ChatColor.UNDERLINE);
+                    messageParts.then(hBoots.getName().substring(0,2) + "item").itemTooltip(hBoots).style(ChatColor.UNDERLINE);
                 } else {
                     messageParts.then("nothing");
                 }
             } else if (validator.isValid(str)) {
-                messageParts.then(s.length() > 12 ? s.substring(0, 12) : s).color(ChatColor.AQUA).style(ChatColor.UNDERLINE).link(str);
+                messageParts.then("link").color(ChatColor.AQUA).style(ChatColor.UNDERLINE).link(str);
+            } else if (validator.isValid("http://" + str)) {
+                messageParts.then("link").color(ChatColor.AQUA).style(ChatColor.UNDERLINE).link("http://" + str);
             } else {
                 messageParts.then(TextUtils.color(color + s));
             }
