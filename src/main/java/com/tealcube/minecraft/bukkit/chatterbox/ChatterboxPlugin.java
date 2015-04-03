@@ -74,6 +74,9 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         event.setCancelled(true);
         Player player = event.getPlayer();
         Set<Player> receivers = event.getRecipients();
