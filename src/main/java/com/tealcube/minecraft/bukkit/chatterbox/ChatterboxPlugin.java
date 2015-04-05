@@ -146,9 +146,9 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
                     messageParts.then("nothing");
                 }
             } else if (validator.isValid(str)) {
-                messageParts.then("link").color(ChatColor.AQUA).style(ChatColor.UNDERLINE).link(str);
+                messageParts.then("link").color(ChatColor.AQUA).style(ChatColor.UNDERLINE).link(str).tooltip(str);
             } else if (validator.isValid("http://" + str)) {
-                messageParts.then("link").color(ChatColor.AQUA).style(ChatColor.UNDERLINE).link("http://" + str);
+                messageParts.then("link").color(ChatColor.AQUA).style(ChatColor.UNDERLINE).link("http://" + str).tooltip("http://" + str);
             } else {
                 messageParts.then(TextUtils.color(color + s));
             }
