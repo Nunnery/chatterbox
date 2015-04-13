@@ -117,15 +117,14 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
                         ChatColor.GOLD + "Rank: " + ChatColor.WHITE + chat.getPrimaryGroup(player));
             } else if (str.equalsIgnoreCase("{hand}") || str.equalsIgnoreCase("{item}")) {
                 if (hHand != null) {
-                    messageParts.then(hHand.getName().substring(0,2) + "[item]").itemTooltip(hHand).style(ChatColor
-                                                                                                             .UNDERLINE);
+                    messageParts.then(hHand.getName().substring(0,2) + "[Item]").itemTooltip(hHand);
                 } else {
                     messageParts.then("nothing");
                 }
             } else if (str.equalsIgnoreCase("{helmet}") || str.equalsIgnoreCase("{head}") || str.equalsIgnoreCase
                 ("{hat}")) {
                 if (hHelmet != null) {
-                    messageParts.then(hHelmet.getName().substring(0,2) + "[helmet]").itemTooltip(hHelmet).style
+                    messageParts.then(hHelmet.getName().substring(0,2) + "[Helm]").itemTooltip(hHelmet).style
                         (ChatColor.UNDERLINE);
                 } else {
                     messageParts.then("nothing");
@@ -133,32 +132,28 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
             } else if (str.equalsIgnoreCase("{chestplate}") || str.equalsIgnoreCase("{chest}") || str
                 .equalsIgnoreCase("{body}")) {
                 if (hChest != null) {
-                    messageParts.then(hChest.getName().substring(0,2) + "[Body]").itemTooltip(hChest).style(ChatColor
-                                                                                                           .UNDERLINE);
+                    messageParts.then(hChest.getName().substring(0,2) + "[Body]").itemTooltip(hChest);
                 } else {
                     messageParts.then("nothing");
                 }
             } else if (str.equalsIgnoreCase("{leggings}") || str.equalsIgnoreCase("{legs}") || str.equalsIgnoreCase
                 ("{pants}")) {
                 if (hLeggings != null) {
-                    messageParts.then(hLeggings.getName().substring(0,2) + "[Legs]").itemTooltip(hLeggings).style
-                        (ChatColor.UNDERLINE);
+                    messageParts.then(hLeggings.getName().substring(0,2) + "[Legs]").itemTooltip(hLeggings);
                 } else {
                     messageParts.then("nothing");
                 }
             } else if (str.equalsIgnoreCase("{boots}") || str.equalsIgnoreCase("{feet}") || str.equalsIgnoreCase
                 ("{shoes}")) {
                 if (hBoots != null) {
-                    messageParts.then(hBoots.getName().substring(0,2) + "[Boots]").itemTooltip(hBoots).style(ChatColor
-                                                                                                           .UNDERLINE);
+                    messageParts.then(hBoots.getName().substring(0,2) + "[Boots]").itemTooltip(hBoots);
                 } else {
                     messageParts.then("nothing");
                 }
             } else if (validator.isValid(str)) {
-                messageParts.then("[link]").color(ChatColor.AQUA).style(ChatColor.UNDERLINE).link(str).tooltip(str);
+                messageParts.then("[Link]").color(ChatColor.AQUA).link(str).tooltip(str);
             } else if (validator.isValid("http://" + str)) {
-                messageParts.then("[link]").color(ChatColor.AQUA).style(ChatColor.UNDERLINE).link("http://" + str)
-                    .tooltip("http://" + str);
+                messageParts.then("[Link]").color(ChatColor.AQUA).link("http://" + str).tooltip("http://" + str);
             } else {
                 messageParts.then(TextUtils.color(color + s));
             }
