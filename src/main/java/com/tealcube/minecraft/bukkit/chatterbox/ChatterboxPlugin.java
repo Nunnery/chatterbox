@@ -115,9 +115,9 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
                         ChatColor.WHITE + player.getName() + " - Level " + player.getLevel(),
                         ChatColor.GOLD + "Guild: " + ChatColor.WHITE + (tribe != null ? tribe.getName() : "None"),
                         ChatColor.GOLD + "Rank: " + ChatColor.WHITE + chat.getPrimaryGroup(player));
-            } else if (str.equalsIgnoreCase("{hand}") || str.equalsIgnoreCase("{item}")) {
+            } else if (str.equalsIgnoreCase("{hand}") || str.equalsIgnoreCase("{item}") || str.equalsIgnoreCase("{link}")) {
                 if (hHand != null) {
-                    if (hHand.getName().contains("§")) {
+                    if (hHand.getName().contains("\u00A7")) {
                         messageParts.then(hHand.getName().substring(0, 2) + "[Item]").itemTooltip(hHand);
                     } else {
                         messageParts.then("[Item]").itemTooltip(hHand);
@@ -128,7 +128,7 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
             } else if (str.equalsIgnoreCase("{helmet}") || str.equalsIgnoreCase("{head}") || str.equalsIgnoreCase
                 ("{hat}")) {
                 if (hHelmet != null) {
-                    if (hHelmet.getName().contains("§")) {
+                    if (hHelmet.getName().contains("\u00A7")) {
                         messageParts.then(hHelmet.getName().substring(0, 2) + "[Item]").itemTooltip(hHelmet);
                     } else {
                         messageParts.then("[Item]").itemTooltip(hHelmet);
@@ -139,7 +139,7 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
             } else if (str.equalsIgnoreCase("{chestplate}") || str.equalsIgnoreCase("{chest}") || str
                 .equalsIgnoreCase("{body}")) {
                 if (hChest != null) {
-                    if (hChest.getName().contains("§")) {
+                    if (hChest.getName().contains("\u00A7")) {
                         messageParts.then(hChest.getName().substring(0, 2) + "[Item]").itemTooltip(hChest);
                     } else {
                         messageParts.then("[Item]").itemTooltip(hChest);
@@ -150,7 +150,7 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
             } else if (str.equalsIgnoreCase("{leggings}") || str.equalsIgnoreCase("{legs}") || str.equalsIgnoreCase
                 ("{pants}")) {
                 if (hLeggings != null) {
-                    if (hLeggings.getName().contains("§")) {
+                    if (hLeggings.getName().contains("\u00A7")) {
                         messageParts.then(hLeggings.getName().substring(0, 2) + "[Item]").itemTooltip(hLeggings);
                     } else {
                         messageParts.then("[Item]").itemTooltip(hLeggings);
@@ -161,7 +161,7 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
             } else if (str.equalsIgnoreCase("{boots}") || str.equalsIgnoreCase("{feet}") || str.equalsIgnoreCase
                 ("{shoes}")) {
                 if (hBoots != null) {
-                    if (hBoots.getName().contains("§")) {
+                    if (hBoots.getName().contains("\u00A7")) {
                         messageParts.then(hBoots.getName().substring(0, 2) + "[Item]").itemTooltip(hBoots);
                     } else {
                         messageParts.then("[Item]").itemTooltip(hBoots);
