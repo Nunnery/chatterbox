@@ -1,4 +1,4 @@
-name: @NAME@
-version: @VERSION@
+name: Chatterbox
+version: ${project.version}
 main: com.tealcube.minecraft.bukkit.chatterbox.ChatterboxPlugin
 depend: [Facecore, EasyTitles, Tribes, Vault]
