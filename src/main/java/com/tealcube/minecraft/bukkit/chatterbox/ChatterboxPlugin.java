@@ -14,10 +14,10 @@
  */
 package com.tealcube.minecraft.bukkit.chatterbox;
 
+import com.tealcube.minecraft.bukkit.facecore.apache.commons.validator.UrlValidator;
 import com.tealcube.minecraft.bukkit.facecore.plugin.FacePlugin;
-import com.tealcube.minecraft.bukkit.facecore.shade.apache.commons.validator.routines.UrlValidator;
-import com.tealcube.minecraft.bukkit.facecore.shade.hilt.HiltItemStack;
 import com.tealcube.minecraft.bukkit.facecore.utilities.TextUtils;
+import com.tealcube.minecraft.bukkit.hilt.HiltItemStack;
 import com.tealcube.minecraft.bukkit.kern.fanciful.FancyMessage;
 import com.tealcube.minecraft.bukkit.kern.shade.google.common.base.Splitter;
 import com.tealcube.minecraft.bukkit.tribes.TribesPlugin;
