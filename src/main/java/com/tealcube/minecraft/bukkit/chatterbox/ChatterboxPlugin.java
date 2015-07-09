@@ -22,6 +22,7 @@
  */
 package com.tealcube.minecraft.bukkit.chatterbox;
 
+import com.tealcube.minecraft.bukkit.facecore.apache.validator.routines.UrlValidator;
 import com.tealcube.minecraft.bukkit.facecore.plugin.FacePlugin;
 import com.tealcube.minecraft.bukkit.facecore.utilities.TextUtils;
 import com.tealcube.minecraft.bukkit.hilt.HiltItemStack;
@@ -32,7 +33,6 @@ import com.tealcube.minecraft.bukkit.tribes.data.Member;
 import com.tealcube.minecraft.bukkit.tribes.data.Tribe;
 import me.barryg.EasyTitles.EasyTitles;
 import net.milkbowl.vault.chat.Chat;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
