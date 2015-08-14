@@ -22,12 +22,12 @@
  */
 package com.tealcube.minecraft.bukkit.chatterbox;
 
+import com.tealcube.minecraft.bukkit.TextUtils;
 import com.tealcube.minecraft.bukkit.facecore.apache.validator.routines.UrlValidator;
 import com.tealcube.minecraft.bukkit.facecore.plugin.FacePlugin;
-import com.tealcube.minecraft.bukkit.facecore.utilities.TextUtils;
 import com.tealcube.minecraft.bukkit.hilt.HiltItemStack;
-import com.tealcube.minecraft.bukkit.kern.fanciful.FancyMessage;
-import com.tealcube.minecraft.bukkit.kern.shade.google.common.base.Splitter;
+import com.tealcube.minecraft.bukkit.shade.fanciful.FancyMessage;
+import com.tealcube.minecraft.bukkit.shade.google.common.base.Splitter;
 import com.tealcube.minecraft.bukkit.tribes.TribesPlugin;
 import com.tealcube.minecraft.bukkit.tribes.data.Member;
 import com.tealcube.minecraft.bukkit.tribes.data.Tribe;
