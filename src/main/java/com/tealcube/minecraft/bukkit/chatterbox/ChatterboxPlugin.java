@@ -93,16 +93,6 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         newFormat = String.format(newFormat, player.getDisplayName(), message);
         List<String> splitMessage = Splitter.on(" ").splitToList(newFormat);
         FancyMessage messageParts = new FancyMessage("");
-        ItemStack hand = player.getEquipment().getItemInHand();
-        HiltItemStack hHand = (hand != null && hand.getType() != Material.AIR) ? new HiltItemStack(hand) : null;
-        ItemStack helmet = player.getEquipment().getHelmet();
-        HiltItemStack hHelmet = (helmet != null && helmet.getType() != Material.AIR) ? new HiltItemStack(helmet) : null;
-        ItemStack chest = player.getEquipment().getChestplate();
-        HiltItemStack hChest = (chest != null && chest.getType() != Material.AIR) ? new HiltItemStack(chest) : null;
-        ItemStack leggings = player.getEquipment().getLeggings();
-        HiltItemStack hLeggings = (leggings != null && leggings.getType() != Material.AIR) ? new HiltItemStack(leggings) : null;
-        ItemStack boots = player.getEquipment().getBoots();
-        HiltItemStack hBoots = (boots != null && boots.getType() != Material.AIR) ? new HiltItemStack(boots) : null;
         Member member = tribesPlugin.getMemberManager().getMember(player.getUniqueId()).or(new Member(player.getUniqueId()));
         if (!tribesPlugin.getMemberManager().hasMember(member)) {
             tribesPlugin.getMemberManager().addMember(member);
@@ -123,59 +113,71 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
                         ChatColor.WHITE + player.getName() + " - Level " + player.getLevel(),
                         ChatColor.GOLD + "Guild: " + ChatColor.WHITE + (tribe != null ? tribe.getName() : "None"),
                         ChatColor.GOLD + "Rank: " + ChatColor.WHITE + chat.getPrimaryGroup(player));
-            } else if (str.equalsIgnoreCase("{hand}") || str.equalsIgnoreCase("{item}") || str.equalsIgnoreCase("{link}")) {
-                if (hHand != null) {
-                    if (hHand.getName().contains("\u00A7")) {
-                        messageParts.then(hHand.getName().substring(0, 2) + "[Item]").itemTooltip(hHand);
+            } else if (str.startsWith("{")) {
+                if (str.equalsIgnoreCase("{hand}") || str.equalsIgnoreCase("{item}") || str.equalsIgnoreCase("{link}")) {
+                    ItemStack hand = player.getEquipment().getItemInHand();
+                    HiltItemStack hHand = (hand != null && hand.getType() != Material.AIR) ? new HiltItemStack(hand) : null;
+                    if (hHand != null) {
+                        if (hHand.getName().contains("\u00A7")) {
+                            messageParts.then(hHand.getName().substring(0, 2) + "[Item]").itemTooltip(hHand);
+                        } else {
+                            messageParts.then("[Item]").itemTooltip(hHand);
+                        }
                     } else {
-                        messageParts.then("[Item]").itemTooltip(hHand);
+                        messageParts.then("nothing");
                     }
-                } else {
-                    messageParts.then("nothing");
-                }
-            } else if (str.equalsIgnoreCase("{helmet}") || str.equalsIgnoreCase("{head}") || str.equalsIgnoreCase
-                ("{hat}")) {
-                if (hHelmet != null) {
-                    if (hHelmet.getName().contains("\u00A7")) {
-                        messageParts.then(hHelmet.getName().substring(0, 2) + "[Item]").itemTooltip(hHelmet);
+                } else if (str.equalsIgnoreCase("{helmet}") || str.equalsIgnoreCase("{head}") || str.equalsIgnoreCase
+                        ("{hat}")) {
+                    ItemStack helmet = player.getEquipment().getHelmet();
+                    HiltItemStack hHelmet = (helmet != null && helmet.getType() != Material.AIR) ? new HiltItemStack(helmet) : null;
+                    if (hHelmet != null) {
+                        if (hHelmet.getName().contains("\u00A7")) {
+                            messageParts.then(hHelmet.getName().substring(0, 2) + "[Item]").itemTooltip(hHelmet);
+                        } else {
+                            messageParts.then("[Item]").itemTooltip(hHelmet);
+                        }
                     } else {
-                        messageParts.then("[Item]").itemTooltip(hHelmet);
+                        messageParts.then("nothing");
                     }
-                } else {
-                    messageParts.then("nothing");
-                }
-            } else if (str.equalsIgnoreCase("{chestplate}") || str.equalsIgnoreCase("{chest}") || str
-                .equalsIgnoreCase("{body}")) {
-                if (hChest != null) {
-                    if (hChest.getName().contains("\u00A7")) {
-                        messageParts.then(hChest.getName().substring(0, 2) + "[Item]").itemTooltip(hChest);
+                } else if (str.equalsIgnoreCase("{chestplate}") || str.equalsIgnoreCase("{chest}") || str
+                        .equalsIgnoreCase("{body}")) {
+                    ItemStack chest = player.getEquipment().getChestplate();
+                    HiltItemStack hChest = (chest != null && chest.getType() != Material.AIR) ? new HiltItemStack(chest) : null;
+                    if (hChest != null) {
+                        if (hChest.getName().contains("\u00A7")) {
+                            messageParts.then(hChest.getName().substring(0, 2) + "[Item]").itemTooltip(hChest);
+                        } else {
+                            messageParts.then("[Item]").itemTooltip(hChest);
+                        }
                     } else {
-                        messageParts.then("[Item]").itemTooltip(hChest);
+                        messageParts.then("nothing");
                     }
-                } else {
-                    messageParts.then("nothing");
-                }
-            } else if (str.equalsIgnoreCase("{leggings}") || str.equalsIgnoreCase("{legs}") || str.equalsIgnoreCase
-                ("{pants}")) {
-                if (hLeggings != null) {
-                    if (hLeggings.getName().contains("\u00A7")) {
-                        messageParts.then(hLeggings.getName().substring(0, 2) + "[Item]").itemTooltip(hLeggings);
+                } else if (str.equalsIgnoreCase("{leggings}") || str.equalsIgnoreCase("{legs}") || str.equalsIgnoreCase
+                        ("{pants}")) {
+                    ItemStack leggings = player.getEquipment().getLeggings();
+                    HiltItemStack hLeggings = (leggings != null && leggings.getType() != Material.AIR) ? new HiltItemStack(leggings) : null;
+                    if (hLeggings != null) {
+                        if (hLeggings.getName().contains("\u00A7")) {
+                            messageParts.then(hLeggings.getName().substring(0, 2) + "[Item]").itemTooltip(hLeggings);
+                        } else {
+                            messageParts.then("[Item]").itemTooltip(hLeggings);
+                        }
                     } else {
-                        messageParts.then("[Item]").itemTooltip(hLeggings);
+                        messageParts.then("nothing");
                     }
-                } else {
-                    messageParts.then("nothing");
-                }
-            } else if (str.equalsIgnoreCase("{boots}") || str.equalsIgnoreCase("{feet}") || str.equalsIgnoreCase
-                ("{shoes}")) {
-                if (hBoots != null) {
-                    if (hBoots.getName().contains("\u00A7")) {
-                        messageParts.then(hBoots.getName().substring(0, 2) + "[Item]").itemTooltip(hBoots);
+                } else if (str.equalsIgnoreCase("{boots}") || str.equalsIgnoreCase("{feet}") || str.equalsIgnoreCase
+                        ("{shoes}")) {
+                    ItemStack boots = player.getEquipment().getBoots();
+                    HiltItemStack hBoots = (boots != null && boots.getType() != Material.AIR) ? new HiltItemStack(boots) : null;
+                    if (hBoots != null) {
+                        if (hBoots.getName().contains("\u00A7")) {
+                            messageParts.then(hBoots.getName().substring(0, 2) + "[Item]").itemTooltip(hBoots);
+                        } else {
+                            messageParts.then("[Item]").itemTooltip(hBoots);
+                        }
                     } else {
-                        messageParts.then("[Item]").itemTooltip(hBoots);
+                        messageParts.then("nothing");
                     }
-                } else {
-                    messageParts.then("nothing");
                 }
             } else if (validator.isValid(str)) {
                 messageParts.then("[Link]").color(ChatColor.AQUA).link(str).tooltip(str);
@@ -191,5 +193,4 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         messageParts.send(Bukkit.getConsoleSender());
         messageParts.send(receivers);
     }
-
 }
