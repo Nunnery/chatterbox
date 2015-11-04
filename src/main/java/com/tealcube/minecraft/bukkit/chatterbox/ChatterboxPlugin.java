@@ -49,6 +49,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -65,8 +66,8 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
     private MasterConfiguration settings;
     private VersionedSmartYamlConfiguration groupsYaml;
     private SmartConfiguration dataYaml;
-    private Map<UUID, PlayerData> playerDataMap;
-    private Map<String, GroupData> groupDataMap;
+    private Map<UUID, PlayerData> playerDataMap = new HashMap<>();
+    private Map<String, GroupData> groupDataMap = new HashMap<>();
     private PluginLogger debugPrinter;
 
     @Override
@@ -234,7 +235,8 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
                         ChatColor.GOLD + "Guild: " + ChatColor.WHITE + (tribe != null ? tribe.getName() : "None"),
                         ChatColor.GOLD + "Rank: " + ChatColor.WHITE + chat.getPrimaryGroup(player));
             } else if (str.equalsIgnoreCase(title)) {
-                messageParts.then(TextUtils.findFirstColor(s) + "[" + s + "]").tooltip(group.getTitleDescription());
+                messageParts.then(TextUtils.findFirstColor(s) + "[" + s + "]").tooltip(concat(group
+                        .getRankDescription(), group.getTitleDescription()));
             } else if (str.startsWith("{")) {
                 if (str.equalsIgnoreCase("{hand}") || str.equalsIgnoreCase("{item}") || str.equalsIgnoreCase("{link}")) {
                     ItemStack hand = player.getEquipment().getItemInHand();
@@ -346,4 +348,14 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
                 {"%title%", title}
         });
     }
+
+    @SafeVarargs
+    private final List<String> concat(List<String>... strings) {
+        List<String> ret = new ArrayList<>();
+        for (List<String> list : strings) {
+            ret.addAll(list);
+        }
+        return ret;
+    }
+
 }
