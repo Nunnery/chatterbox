@@ -69,13 +69,6 @@
             <artifactId>VaultAPI</artifactId>
             <version>1.5</version>
         </dependency>
-        <dependency>
-            <groupId>easytitles</groupId>
-            <artifactId>easytitles</artifactId>
-            <version>easytitles</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/EasyTitles.jar</systemPath>
-        </dependency>
     </dependencies>
 
     <build>

@@ -36,9 +36,6 @@ import com.tealcube.minecraft.bukkit.facecore.plugin.FacePlugin;
 import com.tealcube.minecraft.bukkit.hilt.HiltItemStack;
 import com.tealcube.minecraft.bukkit.shade.fanciful.FancyMessage;
 import com.tealcube.minecraft.bukkit.shade.google.common.base.Splitter;
-import com.tealcube.minecraft.bukkit.tribes.TribesPlugin;
-import com.tealcube.minecraft.bukkit.tribes.data.Member;
-import com.tealcube.minecraft.bukkit.tribes.data.Tribe;
 
 import net.milkbowl.vault.chat.Chat;
 
@@ -66,7 +63,6 @@ import java.util.logging.Level;
 
 public class ChatterboxPlugin extends FacePlugin implements Listener {
 
-    private TribesPlugin tribesPlugin;
     private Chat chat;
     private UrlValidator validator;
     private MasterConfiguration settings;
@@ -104,7 +100,6 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        tribesPlugin = (TribesPlugin) Bukkit.getPluginManager().getPlugin("Tribes");
         getServer().getPluginManager().registerEvents(this, this);
         validator = new UrlValidator();
     }
