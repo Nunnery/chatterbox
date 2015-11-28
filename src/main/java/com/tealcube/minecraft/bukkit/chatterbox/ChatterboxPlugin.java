@@ -110,6 +110,7 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         for (Map.Entry<UUID, PlayerData> entry : playerDataMap.entrySet()) {
             configuration.set("titles." + entry.getKey().toString() + ".title", entry.getValue().getTitle());
             configuration.set("titles." + entry.getKey().toString() + ".title-group", entry.getValue().getTitleGroup());
+            configuration.set("titles." + entry.getKey().toString() + ".ignore-list", entry.getValue().getIgnoreList());
         }
         configuration.save();
     }
@@ -146,6 +147,7 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
             PlayerData playerData = new PlayerData(uuid);
             playerData.setTitle(titleSection.getString("title"));
             playerData.setTitleGroup(titleSection.getString("title-group"));
+            playerData.setIgnoreList(titleSection.getStringList("ignore-list"));
             data.put(uuid, playerData);
         }
         debug("Loaded players: " + data.size());
