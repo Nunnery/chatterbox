@@ -220,14 +220,6 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         GroupData group = getGroupData(player);
         List<String> splitMessage = Splitter.on(" ").splitToList(newFormat);
         FancyMessage messageParts = new FancyMessage("");
-        Member member = tribesPlugin.getMemberManager().getMember(player.getUniqueId()).or(new Member(player.getUniqueId()));
-        if (!tribesPlugin.getMemberManager().hasMember(member)) {
-            tribesPlugin.getMemberManager().addMember(member);
-        }
-        Tribe tribe = null;
-        if (member.getTribe() != null) {
-            tribe = tribesPlugin.getTribeManager().getTribe(member.getTribe()).orNull();
-        }
         ChatColor color = ChatColor.GRAY;
         String title = playerDataMap.containsKey(player.getUniqueId()) ? playerDataMap.get(player.getUniqueId())
                 .getTitle() : settings.getString("config.default-title");
@@ -240,7 +232,6 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
             if (str.equalsIgnoreCase(player.getDisplayName() + ":")) {
                 messageParts.then(s).tooltip(
                         ChatColor.WHITE + player.getName() + " - Level " + player.getLevel(),
-                        ChatColor.GOLD + "Guild: " + ChatColor.WHITE + (tribe != null ? tribe.getName() : "None"),
                         ChatColor.GOLD + "Rank: " + ChatColor.WHITE + chat.getPrimaryGroup(player));
             } else if (str.equalsIgnoreCase(title)) {
                 messageParts.then(TextUtils.findFirstColor(s) + "[" + s + "]").tooltip(concat(group

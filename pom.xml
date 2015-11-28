@@ -51,6 +51,11 @@
             <id>tealcube-repo</id>
             <url>http://maven.tealcube.com/content/groups/public</url>
         </repository>
+        <repository>
+            <id>vault-repo</id>
+            <name>Vault Public Repository</name>
+            <url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -60,9 +65,9 @@
             <version>2.0.0</version>
         </dependency>
         <dependency>
-            <groupId>com.tealcube.minecraft.bukkit</groupId>
-            <artifactId>tribes</artifactId>
-            <version>1.0.1</version>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.5</version>
         </dependency>
         <dependency>
             <groupId>easytitles</groupId>
