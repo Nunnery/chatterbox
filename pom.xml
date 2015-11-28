@@ -28,7 +28,7 @@
     <parent>
         <groupId>com.tealcube.minecraft.bukkit</groupId>
         <artifactId>bukkit-plugin-parent</artifactId>
-        <version>0.0.4</version>
+        <version>0.0.13</version>
     </parent>
 
     <artifactId>chatterbox</artifactId>
@@ -45,6 +45,13 @@
         <url>https://github.com/TealCube/chatterbox.git</url>
         <tag>HEAD</tag>
     </scm>
+
+    <repositories>
+        <repository>
+            <id>tealcube-repo</id>
+            <url>http://maven.tealcube.com/content/groups/public</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
