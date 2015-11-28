@@ -318,6 +318,14 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         messageParts.send(receivers);
     }
 
+    public Map<UUID, PlayerData> getPlayerDataMap() {
+        return playerDataMap;
+    }
+
+    public Map<String, GroupData> getGroupDataMap() {
+        return groupDataMap;
+    }
+
     private GroupData getGroupData(Player player) {
         GroupData group = null;
         for (Map.Entry<String, GroupData> entry : groupDataMap.entrySet()) {
