@@ -1,6 +1,7 @@
 package com.tealcube.minecraft.bukkit.chatterbox;
 
 import com.tealcube.minecraft.bukkit.chatterbox.titles.GroupData;
+import com.tealcube.minecraft.bukkit.chatterbox.titles.PlayerData;
 import com.tealcube.minecraft.bukkit.facecore.utilities.MessageUtils;
 
 import org.bukkit.ChatColor;
@@ -58,6 +59,25 @@ public class TitleCommand {
         }
     }
 
+    @Command(identifier = "title use", permissions = "chatterbox.commands.use", onlyPlayers = true)
+    public void useCommand(Player sender, @Arg(name = "title", verifiers = "min[0]") int title) {
+        List<String> titles = getTitles(sender);
+        if (titles.isEmpty()) {
+            MessageUtils.sendMessage(sender, "<red>You have no titles.");
+            return;
+        }
+        int chosenTitle = Math.max(title, titles.size());
+        PlayerData playerData = plugin.getPlayerDataMap().get(sender.getUniqueId());
+        if (playerData == null) {
+            playerData = new PlayerData(sender.getUniqueId());
+        }
+        playerData.setTitle(titles.get(chosenTitle));
+        playerData.setTitleGroup(getTitleGroup(sender));
+        plugin.getPlayerDataMap().put(sender.getUniqueId(), playerData);
+        MessageUtils.sendMessage(sender, "<green>Your title was changed to <white>%title%<green>!", new
+                String[][]{{"%title%", playerData.getTitle()}});
+    }
+
     private List<String> getTitles(Player player) {
         List<String> titles = new ArrayList<>();
         for (Map.Entry<String, GroupData> entry : plugin.getGroupDataMap().entrySet()) {
@@ -66,6 +86,18 @@ public class TitleCommand {
             }
         }
         return titles;
+    }
+
+    private String getTitleGroup(Player player) {
+        String titleGroup = "";
+        int lastWeight = 0;
+        for (Map.Entry<String, GroupData> entry : plugin.getGroupDataMap().entrySet()) {
+            if (player.hasPermission("easytitles.group." + entry.getKey()) && entry.getValue().getWeight() > lastWeight) {
+                titleGroup = entry.getKey();
+                lastWeight = entry.getValue().getWeight();
+            }
+        }
+        return titleGroup;
     }
 
 }

@@ -3,6 +3,12 @@ version: ${project.version}
 main: com.tealcube.minecraft.bukkit.chatterbox.ChatterboxPlugin
 depend: [Facecore, EasyTitles, Tribes, Vault]
 
+permissions:
+  chatterbox.commands.list:
+    default: true
+  chatterbox.commands.use:
+    default: true
+
 commands:
   title:
     aliases: []
