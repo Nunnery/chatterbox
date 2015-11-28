@@ -309,7 +309,16 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
             }
         }
         messageParts.send(Bukkit.getConsoleSender());
-        messageParts.send(receivers);
+        for (Player receiver : receivers) {
+            PlayerData playerData = getPlayerDataMap().get(receiver.getUniqueId());
+            if (playerData == null) {
+                continue;
+            }
+            if (playerData.getIgnoreList().contains(player.getName())) {
+                continue;
+            }
+            messageParts.send(receiver);
+        }
     }
 
     public Map<UUID, PlayerData> getPlayerDataMap() {
