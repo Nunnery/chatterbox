@@ -52,6 +52,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import se.ranzdo.bukkit.methodcommand.CommandHandler;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,6 +105,9 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         }
         getServer().getPluginManager().registerEvents(this, this);
         validator = new UrlValidator();
+
+        CommandHandler commandHandler = new CommandHandler(this);
+        commandHandler.registerCommands(new TitleCommand(this));
 
         Bukkit.getScheduler().runTaskTimer(this, new Runnable() {
             @Override
