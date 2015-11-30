@@ -48,6 +48,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
@@ -102,6 +103,25 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         }
         getServer().getPluginManager().registerEvents(this, this);
         validator = new UrlValidator();
+
+        Bukkit.getScheduler().runTaskTimer(this, new Runnable() {
+            @Override
+            public void run() {
+                saveGroupData(groupsYaml);
+                savePlayerData(dataYaml);
+            }
+        }, 20L * 600, 20L * 600);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        PlayerData playerData = getPlayerDataMap().get(event.getPlayer().getUniqueId());
+        if (playerData == null) {
+            playerData = new PlayerData(event.getPlayer().getUniqueId());
+            playerData.setTitle(settings.getString("config.default-title"));
+            playerData.setTitleGroup(getTitleGroup(event.getPlayer()));
+        }
+        getPlayerDataMap().put(event.getPlayer().getUniqueId(), playerData);
     }
 
     private void savePlayerData(SmartConfiguration configuration) {
@@ -367,6 +387,18 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
             ret.addAll(list);
         }
         return ret;
+    }
+
+    private String getTitleGroup(Player player) {
+        String titleGroup = "";
+        int lastWeight = 0;
+        for (Map.Entry<String, GroupData> entry : getGroupDataMap().entrySet()) {
+            if (player.hasPermission("easytitles.group." + entry.getKey()) && entry.getValue().getWeight() > lastWeight) {
+                titleGroup = entry.getKey();
+                lastWeight = entry.getValue().getWeight();
+            }
+        }
+        return titleGroup;
     }
 
 }
