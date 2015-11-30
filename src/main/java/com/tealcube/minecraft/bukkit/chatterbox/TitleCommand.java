@@ -44,6 +44,12 @@ public class TitleCommand {
         this.plugin = plugin;
     }
 
+    @Command(identifier = "title", onlyPlayers = true)
+    public void baseCommand(Player sender) {
+        MessageUtils.sendMessage(sender, "<blue>/title list <number><gray>- Lists titles");
+        MessageUtils.sendMessage(sender, "<blue>/title use <number><gray>- Picks a title");
+    }
+
     @Command(identifier = "title list", permissions = "chatterbox.commands.list", onlyPlayers = true)
     public void listCommand(Player sender, @Arg(name = "page", def = "1", verifiers = "min[0]") int page) {
         List<String> titles = getTitles(sender);
