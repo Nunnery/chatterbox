@@ -8,7 +8,11 @@ permissions:
     default: true
   chatterbox.commands.use:
     default: true
+  chatterbox.commands.ignore:
+    default: true
 
 commands:
   title:
     aliases: []
+  ignore:
+    aliases: [ign]

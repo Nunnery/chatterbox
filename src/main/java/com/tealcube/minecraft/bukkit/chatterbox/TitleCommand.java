@@ -106,6 +106,26 @@ public class TitleCommand {
                 String[][]{{"%title%", playerData.getTitle()}});
     }
 
+    @Command(identifier = "ignore", permissions = "chatterbox.commands.ignore", onlyPlayers = true)
+    public void ignoreCommand(Player sender, @Arg(name = "player") Player target) {
+        PlayerData playerData = plugin.getPlayerDataMap().get(sender.getUniqueId());
+        if (playerData == null) {
+            playerData = new PlayerData(sender.getUniqueId());
+        }
+        List<String> ignores = playerData.getIgnoreList();
+        if (ignores.contains(target.getUniqueId().toString())) {
+            ignores.remove(target.getUniqueId().toString());
+            MessageUtils.sendMessage(sender, "<green>You have unignored <white>%player%<green>.",
+                    new String[][]{{"%player%", target.getDisplayName()}});
+        } else {
+            ignores.add(target.getUniqueId().toString());
+            MessageUtils.sendMessage(sender, "<green>You have ignored <white>%player%<green>.",
+                    new String[][]{{"%player%", target.getDisplayName()}});
+        }
+        playerData.setIgnoreList(ignores);
+        plugin.getPlayerDataMap().put(sender.getUniqueId(), playerData);
+    }
+
     private List<String> getTitles(Player player) {
         List<String> titles = new ArrayList<>();
         for (Map.Entry<String, GroupData> entry : plugin.getGroupDataMap().entrySet()) {
