@@ -24,6 +24,7 @@ package com.tealcube.minecraft.bukkit.chatterbox.titles;
 
 import com.google.common.base.Objects;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,7 +33,7 @@ public class PlayerData {
     private final UUID uniqueId;
     private String title;
     private String titleGroup;
-    private List<String> ignoreList;
+    private List<String> ignoreList = new ArrayList<>();
 
     public PlayerData(UUID uniqueId) {
         this.uniqueId = uniqueId;
