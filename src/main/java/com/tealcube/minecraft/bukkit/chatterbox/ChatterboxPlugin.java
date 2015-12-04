@@ -1,24 +1,18 @@
 /**
- * The MIT License
- * Copyright (c) 2015 Teal Cube Games
+ * The MIT License Copyright (c) 2015 Teal Cube Games
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.tealcube.minecraft.bukkit.chatterbox;
 
@@ -250,9 +244,12 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
             String s = splitMessage.get(i);
             String str = ChatColor.stripColor(s);
             if (str.equalsIgnoreCase(player.getDisplayName() + ":")) {
-                messageParts.then(s).tooltip(
-                        ChatColor.WHITE + player.getName() + " - Level " + player.getLevel(),
-                        ChatColor.GOLD + "Rank: " + ChatColor.WHITE + chat.getPrimaryGroup(player));
+                String lev = ChatColor.WHITE + player.getName() + " - Level " + player.getLevel();
+                String[] rankDesc = TextUtils.color(group.getRankDescription()).toArray(
+                        new String[group.getRankDescription().size()]);
+                String[] titleDesc = TextUtils.color(group.getTitleDescription()).toArray(
+                        new String[group.getTitleDescription().size()]);
+                messageParts.then(s).tooltip(concat(concat(lev, rankDesc), titleDesc));
             } else if (str.equalsIgnoreCase(title)) {
                 messageParts.then(TextUtils.findFirstColor(s) + "[" + s + "]").tooltip(concat(group
                         .getRankDescription(), group.getTitleDescription()));
@@ -390,6 +387,38 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         List<String> ret = new ArrayList<>();
         for (List<String> list : strings) {
             ret.addAll(list);
+        }
+        return ret;
+    }
+
+
+    private String[] concat(String string, String[] strings) {
+        int size = strings.length + 1;
+        String[] ret = new String[size];
+        ret[0] = string;
+        System.arraycopy(strings, 0, ret, 1, strings.length);
+        return ret;
+    }
+
+    private String[] concat(String[] strings, String string) {
+        int size = strings.length + 1;
+        String[] ret = new String[size];
+        System.arraycopy(strings, 0, ret, 0, strings.length);
+        ret[strings.length] = string;
+        return ret;
+    }
+
+    private String[] concat(String[]... strings) {
+        int size = 0;
+        for (String[] array : strings) {
+            size += array.length;
+        }
+        String[] ret = new String[size];
+        int counter = 0;
+        for (String[] array : strings) {
+            for (String string : array) {
+                ret[counter++] = string;
+            }
         }
         return ret;
     }
