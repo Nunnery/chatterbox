@@ -1,5 +1,5 @@
 name: Chatterbox
-version: ${project.version}
+version: ${project.build.version}
 main: com.tealcube.minecraft.bukkit.chatterbox.ChatterboxPlugin
 depend: [Facecore, Vault]
 
