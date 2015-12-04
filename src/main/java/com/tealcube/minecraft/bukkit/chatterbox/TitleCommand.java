@@ -60,7 +60,7 @@ public class TitleCommand {
         int listWidth = 5;
         int listHeight = 9;
         int totalPages = 1 + titles.size() / (listWidth * listHeight);
-        int curPage = Math.min(page, totalPages);
+        int curPage = Math.max(page, totalPages);
         MessageUtils.sendMessage(sender, "<gold> --== <darkred>Chatterbox <white>Page %curPage% / %totalPages% " +
                 "<gold>==--", new String[][]{{"%curPage%", curPage + ""}, {"%totalPages%", totalPages + ""}});
         curPage *= listWidth * listHeight;
