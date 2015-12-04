@@ -94,7 +94,7 @@ public class TitleCommand {
             MessageUtils.sendMessage(sender, "<red>You have no titles.");
             return;
         }
-        int chosenTitle = Math.max(title, titles.size());
+        int chosenTitle = Math.min(title, titles.size() - 1);
         PlayerData playerData = plugin.getPlayerDataMap().get(sender.getUniqueId());
         if (playerData == null) {
             playerData = new PlayerData(sender.getUniqueId());
