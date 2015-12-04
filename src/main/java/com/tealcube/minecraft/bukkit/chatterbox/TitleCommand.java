@@ -51,7 +51,7 @@ public class TitleCommand {
     }
 
     @Command(identifier = "title list", permissions = "chatterbox.commands.list", onlyPlayers = true)
-    public void listCommand(Player sender, @Arg(name = "page", def = "1", verifiers = "min[0]") int page) {
+    public void listCommand(Player sender, @Arg(name = "page", def = "1", verifiers = "min[1]") int page) {
         List<String> titles = getTitles(sender);
         if (titles.isEmpty()) {
             MessageUtils.sendMessage(sender, "<red>You have no titles.");
@@ -59,7 +59,7 @@ public class TitleCommand {
         }
         int listWidth = 5;
         int listHeight = 9;
-        int totalPages = titles.size() / (listWidth * listHeight);
+        int totalPages = 1 + titles.size() / (listWidth * listHeight);
         int curPage = Math.min(page, totalPages);
         MessageUtils.sendMessage(sender, "<gold> --== <darkred>Chatterbox <white>Page %curPage% / %totalPages% " +
                 "<gold>==--", new String[][]{{"%curPage%", curPage + ""}, {"%totalPages%", totalPages + ""}});
