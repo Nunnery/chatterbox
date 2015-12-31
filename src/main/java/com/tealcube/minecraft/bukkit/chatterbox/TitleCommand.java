@@ -22,6 +22,7 @@
  */
 package com.tealcube.minecraft.bukkit.chatterbox;
 
+import com.tealcube.minecraft.bukkit.chatterbox.menus.GroupMenu;
 import com.tealcube.minecraft.bukkit.chatterbox.titles.GroupData;
 import com.tealcube.minecraft.bukkit.chatterbox.titles.PlayerData;
 import com.tealcube.minecraft.bukkit.facecore.utilities.MessageUtils;
@@ -45,43 +46,12 @@ public class TitleCommand {
 
     @Command(identifier = "title", onlyPlayers = true)
     public void baseCommand(Player sender) {
-        MessageUtils.sendMessage(sender, "<blue>/title list <number><gray>- Lists titles");
-        MessageUtils.sendMessage(sender, "<blue>/title use <number><gray>- Picks a title");
-    }
-
-    @Command(identifier = "title list", permissions = "chatterbox.commands.list", onlyPlayers = true)
-    public void listCommand(Player sender, @Arg(name = "page", def = "1", verifiers = "min[1]") int page) {
-        List<String> titles = getTitles(sender);
-        if (titles.isEmpty()) {
-            MessageUtils.sendMessage(sender, "<red>You have no titles.");
+        GroupMenu menu = plugin.getPlayerGroupMenuMap().get(sender.getUniqueId());
+        if (menu == null) {
+            MessageUtils.sendMessage(sender, "<red>Something just went terribly wrong.");
             return;
         }
-        int pageWidth = 5;
-        int pageHeight = 9;
-        int titlesPerPage = pageWidth * pageHeight;
-        int totalPages = Math.max(titles.size() / titlesPerPage, 1);
-        plugin.debug("Total pages: " + totalPages);
-        MessageUtils.sendMessage(sender, "<gold> --== <darkred>Chatterbox <white>Page %curPage% / %totalPages% " +
-                "<gold>==--", new String[][]{{"%curPage%", "1"}, {"%totalPages%", totalPages + ""}});
-    }
-
-    @Command(identifier = "title use", permissions = "chatterbox.commands.use", onlyPlayers = true)
-    public void useCommand(Player sender, @Arg(name = "title", verifiers = "min[0]") int title) {
-        List<String> titles = getTitles(sender);
-        if (titles.isEmpty()) {
-            MessageUtils.sendMessage(sender, "<red>You have no titles.");
-            return;
-        }
-        int chosenTitle = Math.min(title, titles.size() - 1);
-        PlayerData playerData = plugin.getPlayerDataMap().get(sender.getUniqueId());
-        if (playerData == null) {
-            playerData = new PlayerData(sender.getUniqueId());
-        }
-        playerData.setTitle(titles.get(chosenTitle));
-        playerData.setTitleGroup(getTitleGroup(sender));
-        plugin.getPlayerDataMap().put(sender.getUniqueId(), playerData);
-        MessageUtils.sendMessage(sender, "<green>Your title was changed to <white>%title%<green>!", new
-                String[][]{{"%title%", playerData.getTitle()}});
+        menu.openFor(sender);
     }
 
     @Command(identifier = "ignore", permissions = "chatterbox.commands.ignore", onlyPlayers = true)

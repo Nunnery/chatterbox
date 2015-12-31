@@ -22,7 +22,10 @@
  */
 package com.tealcube.minecraft.bukkit.chatterbox;
 
+import com.tealcube.minecraft.bukkit.CaselessMap;
 import com.tealcube.minecraft.bukkit.TextUtils;
+import com.tealcube.minecraft.bukkit.chatterbox.menus.GroupMenu;
+import com.tealcube.minecraft.bukkit.chatterbox.menus.TitleMenu;
 import com.tealcube.minecraft.bukkit.chatterbox.titles.GroupData;
 import com.tealcube.minecraft.bukkit.chatterbox.titles.PlayerData;
 import com.tealcube.minecraft.bukkit.config.MasterConfiguration;
@@ -49,6 +52,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
@@ -66,18 +71,27 @@ import java.util.logging.Level;
 
 public class ChatterboxPlugin extends FacePlugin implements Listener {
 
+    private static ChatterboxPlugin _INSTANCE;
+
     private Chat chat;
     private UrlValidator validator;
     private MasterConfiguration settings;
     private VersionedSmartYamlConfiguration groupsYaml;
     private SmartConfiguration dataYaml;
+    private Map<UUID, GroupMenu> playerGroupMenuMap = new HashMap<>();
     private Map<UUID, PlayerData> playerDataMap = new HashMap<>();
-    private Map<String, GroupData> groupDataMap = new HashMap<>();
+    private Map<String, GroupData> groupDataMap = new CaselessMap<>();
+    private Map<String, TitleMenu> titleMenuMap = new CaselessMap<>();
     private PluginLogger debugPrinter;
+
+    public static ChatterboxPlugin getInstance() {
+        return _INSTANCE;
+    }
 
     @Override
     public void enable() {
         debugPrinter = new PluginLogger(this);
+        _INSTANCE = this;
 
         VersionedSmartYamlConfiguration configYaml = new VersionedSmartYamlConfiguration(
                 new File(getDataFolder(), "config.yml"), getResource("config.yml"),
@@ -97,6 +111,10 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
 
         loadGroupData(groupsYaml);
         loadPlayerData(dataYaml);
+
+        for (GroupData groupData : groupDataMap.values()) {
+            titleMenuMap.put(groupData.getKey(), new TitleMenu(this, groupData));
+        }
 
         settings = MasterConfiguration.loadFromFiles(configYaml);
         if (!setupChat()) {
@@ -127,6 +145,17 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
             playerData.setTitleGroup(getTitleGroup(event.getPlayer()));
         }
         getPlayerDataMap().put(event.getPlayer().getUniqueId(), playerData);
+        getPlayerGroupMenuMap().put(event.getPlayer().getUniqueId(), new GroupMenu(this, event.getPlayer()));
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        getPlayerGroupMenuMap().remove(event.getPlayer().getUniqueId());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerKick(PlayerKickEvent event) {
+        getPlayerGroupMenuMap().remove(event.getPlayer().getUniqueId());
     }
 
     private void savePlayerData(SmartConfiguration configuration) {
@@ -227,6 +256,13 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         savePlayerData(dataYaml);
     }
 
+    public TitleMenu getTitleMenu(String key) {
+        if (titleMenuMap.containsKey(key)) {
+            return titleMenuMap.get(key);
+        }
+        return null;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) {
@@ -255,9 +291,9 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
                         new String[group.getRankDescription().size()]);
                 String[] titleDesc = TextUtils.color(group.getTitleDescription()).toArray(
                         new String[group.getTitleDescription().size()]);
-                messageParts.then(s).tooltip(concat(concat(lev, rankDesc), titleDesc));
+                messageParts.then(s).tooltip(StringUtils.concat(StringUtils.concat(lev, rankDesc), titleDesc));
             } else if (str.equalsIgnoreCase(title)) {
-                messageParts.then(TextUtils.findFirstColor(s) + "[" + s + "]").tooltip(concat(group
+                messageParts.then(TextUtils.findFirstColor(s) + "[" + s + "]").tooltip(StringUtils.concat(group
                         .getRankDescription(), group.getTitleDescription()));
             } else if (str.startsWith("{")) {
                 if (str.equalsIgnoreCase("{hand}") || str.equalsIgnoreCase("{item}") || str.equalsIgnoreCase("{link}")) {
@@ -359,16 +395,13 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
 
     private GroupData getGroupData(Player player) {
         GroupData group = null;
-        for (Map.Entry<String, GroupData> entry : groupDataMap.entrySet()) {
-            if (!player.hasPermission("easytitles.group." + entry.getKey())) {
-                continue;
-            }
+        for (GroupData data : getGroups(player)) {
             if (group == null) {
-                group = entry.getValue();
+                group = data;
                 continue;
             }
-            if (entry.getValue().getWeight() > group.getWeight()) {
-                group = entry.getValue();
+            if (data.getWeight() > group.getWeight()) {
+                group = data;
             }
         }
         return group;
@@ -388,48 +421,7 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         });
     }
 
-    @SafeVarargs
-    private final List<String> concat(List<String>... strings) {
-        List<String> ret = new ArrayList<>();
-        for (List<String> list : strings) {
-            ret.addAll(list);
-        }
-        return ret;
-    }
-
-
-    private String[] concat(String string, String[] strings) {
-        int size = strings.length + 1;
-        String[] ret = new String[size];
-        ret[0] = string;
-        System.arraycopy(strings, 0, ret, 1, strings.length);
-        return ret;
-    }
-
-    private String[] concat(String[] strings, String string) {
-        int size = strings.length + 1;
-        String[] ret = new String[size];
-        System.arraycopy(strings, 0, ret, 0, strings.length);
-        ret[strings.length] = string;
-        return ret;
-    }
-
-    private String[] concat(String[]... strings) {
-        int size = 0;
-        for (String[] array : strings) {
-            size += array.length;
-        }
-        String[] ret = new String[size];
-        int counter = 0;
-        for (String[] array : strings) {
-            for (String string : array) {
-                ret[counter++] = string;
-            }
-        }
-        return ret;
-    }
-
-    private String getTitleGroup(Player player) {
+    public String getTitleGroup(Player player) {
         String titleGroup = "";
         int lastWeight = 0;
         for (Map.Entry<String, GroupData> entry : getGroupDataMap().entrySet()) {
@@ -441,4 +433,18 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         return titleGroup;
     }
 
+    public List<GroupData> getGroups(Player player) {
+        List<GroupData> groupDatas = new ArrayList<>();
+        for (Map.Entry<String, GroupData> entry : groupDataMap.entrySet()) {
+            if (!player.hasPermission("easytitles.group." + entry.getKey())) {
+                continue;
+            }
+            groupDatas.add(entry.getValue());
+        }
+        return groupDatas;
+    }
+
+    public Map<UUID, GroupMenu> getPlayerGroupMenuMap() {
+        return playerGroupMenuMap;
+    }
 }

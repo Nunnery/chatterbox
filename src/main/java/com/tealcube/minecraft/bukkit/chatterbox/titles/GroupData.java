@@ -103,4 +103,7 @@ public class GroupData {
         this.weight = weight;
     }
 
+    public String getKey() {
+        return key;
+    }
 }
