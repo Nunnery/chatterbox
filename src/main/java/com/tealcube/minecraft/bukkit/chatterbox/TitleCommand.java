@@ -26,7 +26,6 @@ import com.tealcube.minecraft.bukkit.chatterbox.titles.GroupData;
 import com.tealcube.minecraft.bukkit.chatterbox.titles.PlayerData;
 import com.tealcube.minecraft.bukkit.facecore.utilities.MessageUtils;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import se.ranzdo.bukkit.methodcommand.Arg;
@@ -57,34 +56,13 @@ public class TitleCommand {
             MessageUtils.sendMessage(sender, "<red>You have no titles.");
             return;
         }
-        int listWidth = 5;
-        int listHeight = 9;
-        int totalPages = 1 + titles.size() / (listWidth * listHeight);
-        int curPage = Math.max(page, totalPages);
+        int pageWidth = 5;
+        int pageHeight = 9;
+        int titlesPerPage = pageWidth * pageHeight;
+        int totalPages = Math.max(titles.size() / titlesPerPage, 1);
+        plugin.debug("Total pages: " + totalPages);
         MessageUtils.sendMessage(sender, "<gold> --== <darkred>Chatterbox <white>Page %curPage% / %totalPages% " +
-                "<gold>==--", new String[][]{{"%curPage%", curPage + ""}, {"%totalPages%", totalPages + ""}});
-        curPage *= listWidth * listHeight;
-        int count = 1;
-        String message = "";
-        for (int i = curPage; i < curPage + listWidth * listHeight; ++i) {
-            if (i < titles.size()) {
-                message = message + ChatColor.WHITE + i + ": " + ChatColor.GREEN + titles.get(i) + " ";
-            }
-
-            if (count == listWidth) {
-                if (!message.equals("")) {
-                    MessageUtils.sendMessage(sender, message);
-                }
-                if (i > titles.size()) {
-                    break;
-                }
-
-                message = "";
-                count = 1;
-            } else {
-                count++;
-            }
-        }
+                "<gold>==--", new String[][]{{"%curPage%", "1"}, {"%totalPages%", totalPages + ""}});
     }
 
     @Command(identifier = "title use", permissions = "chatterbox.commands.use", onlyPlayers = true)
