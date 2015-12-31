@@ -31,7 +31,7 @@ import io.github.Cnly.BusyInv.BusyInv.menus.ChestMenu;
 public class TitleMenu extends ChestMenu {
 
     public TitleMenu(ChatterboxPlugin plugin, GroupData groupData) {
-        super("Click a Title!", null, groupData.getTitles().size());
+        super("Click a Title!", null, ChestSize.fit(groupData.getTitles().size()));
 
         int counter = 1;
         for (String title : groupData.getTitles()) {
