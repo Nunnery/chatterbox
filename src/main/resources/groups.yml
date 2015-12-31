@@ -1,0 +1,27 @@
+version: "0.0.1"
+groups:
+  Admins:
+    titles:
+    - Admin
+    - A
+    - DankMemer
+    title-color: <dark red>
+    chat-color: <white>
+    rank-description:
+    - This player is a Faceland Admin!
+    title-description:
+    - This title was obtained by being
+    - an Admin at Faceland!
+    weight: 40
+  Mods:
+    titles:
+    - M
+    - Mod
+    title-color: <gold>
+    chat-color: <white>
+    rank-description:
+    - This player is a Faceland Moderator!
+    title-description:
+    - This title was obtained by being a
+    - huuuuuuuge nerd!
+    weight: 20

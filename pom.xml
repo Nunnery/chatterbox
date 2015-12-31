@@ -28,7 +28,7 @@
     <parent>
         <groupId>com.tealcube.minecraft.bukkit</groupId>
         <artifactId>bukkit-plugin-parent</artifactId>
-        <version>0.0.4</version>
+        <version>0.0.13</version>
     </parent>
 
     <artifactId>chatterbox</artifactId>
@@ -46,23 +46,28 @@
         <tag>HEAD</tag>
     </scm>
 
+    <repositories>
+        <repository>
+            <id>tealcube-repo</id>
+            <url>http://maven.tealcube.com/content/groups/public</url>
+        </repository>
+        <repository>
+            <id>vault-repo</id>
+            <name>Vault Public Repository</name>
+            <url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.tealcube.minecraft.bukkit</groupId>
             <artifactId>facecore</artifactId>
-            <version>2.0.0</version>
+            <version>2.0.3-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.tealcube.minecraft.bukkit</groupId>
-            <artifactId>tribes</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>easytitles</groupId>
-            <artifactId>easytitles</artifactId>
-            <version>easytitles</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/EasyTitles.jar</systemPath>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.5</version>
         </dependency>
     </dependencies>
 
@@ -90,6 +95,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.version>${project.version}-${git.commit.id.abbrev}</project.build.version>
         <project.build.javaVersion>1.7</project.build.javaVersion>
     </properties>
 
