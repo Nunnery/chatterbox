@@ -41,7 +41,11 @@ public class GroupMenu extends ChestMenu {
         int counter = 0;
         List<GroupData> groupDataList = plugin.getGroups(player);
         for (GroupData data : groupDataList) {
-            setItem(counter++, new GroupItem(data));
+            TitleMenu titleMenu = ChatterboxPlugin.getInstance().getTitleMenu(data.getKey());
+            if (titleMenu == null) {
+                continue;
+            }
+            setItem(counter++, new GroupItem(data, titleMenu));
         }
     }
 

@@ -22,34 +22,28 @@
  */
 package com.tealcube.minecraft.bukkit.chatterbox.items;
 
-import com.tealcube.minecraft.bukkit.chatterbox.ChatterboxPlugin;
 import com.tealcube.minecraft.bukkit.chatterbox.menus.TitleMenu;
 import com.tealcube.minecraft.bukkit.chatterbox.titles.GroupData;
 
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.Cnly.BusyInv.BusyInv.events.ItemClickEvent;
+import io.github.Cnly.BusyInv.BusyInv.items.MenuOpenItem;
 
-public class GroupItem extends MetaBusyItem {
+public class GroupItem extends MenuOpenItem {
 
     private final GroupData groupData;
 
-    public GroupItem(GroupData groupData) {
-        super(groupData.getKey(), new ItemStack(Material.CHEST), groupData.getRankDescription());
+    public GroupItem(GroupData groupData, TitleMenu menu) {
+        super(menu, groupData.getKey(), new ItemStack(Material.CHEST),
+                groupData.getRankDescription().toArray(new String[groupData.getRankDescription().size()]));
         this.groupData = groupData;
     }
 
     @Override
     public void onClick(ItemClickEvent e) {
         super.onClick(e);
-        Player player = e.getPlayer();
-        TitleMenu titleMenu = ChatterboxPlugin.getInstance().getTitleMenu(groupData.getKey());
-        if (titleMenu == null) {
-            return;
-        }
-        titleMenu.openFor(player);
     }
 
 }

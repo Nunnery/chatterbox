@@ -32,13 +32,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.Cnly.BusyInv.BusyInv.events.ItemClickEvent;
+import io.github.Cnly.BusyInv.BusyInv.items.BusyItem;
 
-public class TitleItem extends MetaBusyItem {
+public class TitleItem extends BusyItem {
 
     private final String title;
 
     public TitleItem(String title, GroupData groupData) {
-        super(title, new ItemStack(Material.NAME_TAG), groupData.getTitleDescription());
+        super(title, new ItemStack(Material.NAME_TAG),
+                groupData.getRankDescription().toArray(new String[groupData.getRankDescription().size()]));
         this.title = title;
     }
 
