@@ -27,6 +27,7 @@ import com.tealcube.minecraft.bukkit.chatterbox.titles.GroupData;
 import com.tealcube.minecraft.bukkit.chatterbox.titles.PlayerData;
 import com.tealcube.minecraft.bukkit.facecore.utilities.MessageUtils;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import se.ranzdo.bukkit.methodcommand.Arg;
@@ -72,6 +73,22 @@ public class TitleCommand {
         }
         playerData.setIgnoreList(ignores);
         plugin.getPlayerDataMap().put(sender.getUniqueId(), playerData);
+    }
+
+    @Command(identifier = "w", onlyPlayers = true)
+    public void whisperCommand(Player sender, @Arg(name = "player") Player target, @Arg(name = "message") String
+            message) {
+        PlayerData playerData = plugin.getPlayerDataMap().get(target.getUniqueId());
+        if (playerData == null) {
+            playerData = new PlayerData(target.getUniqueId());
+        }
+        List<String> ignores = playerData.getIgnoreList();
+        if (ignores.contains(sender.getUniqueId().toString())) {
+            MessageUtils.sendMessage(sender, ChatColor.RED + "Message not sent. This player has ignored you.");
+        } else {
+            MessageUtils.sendMessage(target, ChatColor.LIGHT_PURPLE + sender.getName() + ": " + message);
+            MessageUtils.sendMessage(sender, ChatColor.DARK_PURPLE + "To " + sender.getName() + ": " + message);
+        }
     }
 
     private List<String> getTitles(Player player) {
