@@ -51,9 +51,6 @@ public class TitleMenu extends ChestMenu {
     public void onMenuOpen(InventoryOpenEvent e) {
         super.onMenuOpen(e);
         GroupMenu groupMenu = plugin.getPlayerGroupMenuMap().get(e.getPlayer().getUniqueId());
-        if (groupMenu == null) {
-            return;
-        }
         setItem(0, new MenuOpenItem(groupMenu, "Go Back", new ItemStack(Material.REDSTONE)));
     }
 }
