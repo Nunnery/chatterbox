@@ -23,7 +23,6 @@
 package com.tealcube.minecraft.bukkit.chatterbox.items;
 
 import com.tealcube.minecraft.bukkit.chatterbox.ChatterboxPlugin;
-import com.tealcube.minecraft.bukkit.chatterbox.titles.GroupData;
 import com.tealcube.minecraft.bukkit.chatterbox.titles.PlayerData;
 import com.tealcube.minecraft.bukkit.facecore.utilities.MessageUtils;
 
@@ -38,9 +37,8 @@ public class TitleItem extends BusyItem {
 
     private final String title;
 
-    public TitleItem(String title, GroupData groupData) {
-        super(title, new ItemStack(Material.NAME_TAG),
-                groupData.getRankDescription().toArray(new String[groupData.getRankDescription().size()]));
+    public TitleItem(String title) {
+        super(title, new ItemStack(Material.NAME_TAG));
         this.title = title;
     }
 
@@ -54,7 +52,7 @@ public class TitleItem extends BusyItem {
         }
         playerData.setTitle(title);
         playerData.setTitleGroup(ChatterboxPlugin.getInstance().getTitleGroup(player));
-        MessageUtils.sendMessage(player, "<green>Your title has been changed!");
+        MessageUtils.sendMessage(player, "<green>You changed your title to <white>[" + title + "]<green>!");
         e.setCloseDirectly(true);
     }
 

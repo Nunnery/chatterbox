@@ -36,7 +36,7 @@ import io.github.Cnly.BusyInv.BusyInv.menus.ChestMenu;
 public class GroupMenu extends ChestMenu {
 
     public GroupMenu(ChatterboxPlugin plugin, Player player) {
-        super(ChatColor.BLACK + "Click a Group!", null, ChestSize.fit(plugin.getGroupDataMap().size()));
+        super(ChatColor.BLACK + "Pick a Group!", null, ChestSize.fit(plugin.getGroupDataMap().size()));
 
         int counter = 0;
         List<GroupData> groupDataList = plugin.getGroups(player);

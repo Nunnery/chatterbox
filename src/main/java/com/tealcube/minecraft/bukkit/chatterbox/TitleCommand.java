@@ -77,7 +77,7 @@ public class TitleCommand {
     private List<String> getTitles(Player player) {
         List<String> titles = new ArrayList<>();
         for (Map.Entry<String, GroupData> entry : plugin.getGroupDataMap().entrySet()) {
-            if (player.hasPermission("easytitles.group." + entry.getKey())) {
+            if (player.hasPermission("chatterbox.group." + entry.getKey())) {
                 titles.addAll(entry.getValue().getTitles());
             }
         }
@@ -88,7 +88,8 @@ public class TitleCommand {
         String titleGroup = "";
         int lastWeight = 0;
         for (Map.Entry<String, GroupData> entry : plugin.getGroupDataMap().entrySet()) {
-            if (player.hasPermission("easytitles.group." + entry.getKey()) && entry.getValue().getWeight() > lastWeight) {
+            if (player.hasPermission("chatterbox.group." + entry.getKey()) && entry.getValue().getWeight() >
+                    lastWeight) {
                 titleGroup = entry.getKey();
                 lastWeight = entry.getValue().getWeight();
             }

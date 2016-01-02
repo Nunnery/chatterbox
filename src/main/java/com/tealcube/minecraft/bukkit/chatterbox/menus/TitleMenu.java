@@ -26,16 +26,17 @@ import com.tealcube.minecraft.bukkit.chatterbox.ChatterboxPlugin;
 import com.tealcube.minecraft.bukkit.chatterbox.items.TitleItem;
 import com.tealcube.minecraft.bukkit.chatterbox.titles.GroupData;
 
+import org.bukkit.ChatColor;
+
 import io.github.Cnly.BusyInv.BusyInv.menus.ChestMenu;
 
 public class TitleMenu extends ChestMenu {
 
     public TitleMenu(ChatterboxPlugin plugin, GroupData groupData) {
-        super("Click a Title!", null, ChestSize.fit(groupData.getTitles().size()));
-
+        super(ChatColor.BLACK + "Title Select!", null, ChestSize.fit(groupData.getTitles().size()));
         int counter = 1;
         for (String title : groupData.getTitles()) {
-            setItem(counter++, new TitleItem(title, groupData));
+            setItem(counter++, new TitleItem(title));
         }
     }
 
