@@ -378,7 +378,7 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
             if (playerData == null) {
                 continue;
             }
-            if (playerData.getIgnoreList().contains(player.getName())) {
+            if (playerData.getIgnoreList().contains(player.getUniqueId().toString())) {
                 continue;
             }
             messageParts.send(receiver);
