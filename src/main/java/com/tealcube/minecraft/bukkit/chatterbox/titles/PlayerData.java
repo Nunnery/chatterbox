@@ -34,6 +34,8 @@ public class PlayerData {
     private String title;
     private String titleGroup;
     private List<String> ignoreList = new ArrayList<>();
+    private UUID lastWhisperTo;
+    private UUID lastWhisperFrom;
 
     public PlayerData(UUID uniqueId) {
         this.uniqueId = uniqueId;
@@ -78,5 +80,21 @@ public class PlayerData {
 
     public void setIgnoreList(List<String> ignoreList) {
         this.ignoreList = ignoreList;
+    }
+
+    public UUID getLastWhisperTo() {
+        return lastWhisperTo;
+    }
+
+    public void setLastWhisperTo(UUID lastWhisperTo) {
+        this.lastWhisperTo = lastWhisperTo;
+    }
+
+    public UUID getLastWhisperFrom() {
+        return lastWhisperFrom;
+    }
+
+    public void setLastWhisperFrom(UUID lastWhisperFrom) {
+        this.lastWhisperFrom = lastWhisperFrom;
     }
 }

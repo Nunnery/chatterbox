@@ -18,3 +18,7 @@ commands:
     aliases: [w, tell, pm, message, msg]
   ignore:
     aliases: [ign]
+  reply:
+    aliases: [r, rep]
+  continue:
+    aliases: [c, cont, con]

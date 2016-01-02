@@ -1,24 +1,18 @@
 /**
- * The MIT License
- * Copyright (c) 2015 Teal Cube Games
+ * The MIT License Copyright (c) 2015 Teal Cube Games
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.tealcube.minecraft.bukkit.chatterbox;
 
@@ -27,11 +21,13 @@ import com.tealcube.minecraft.bukkit.chatterbox.titles.GroupData;
 import com.tealcube.minecraft.bukkit.chatterbox.titles.PlayerData;
 import com.tealcube.minecraft.bukkit.facecore.utilities.MessageUtils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import se.ranzdo.bukkit.methodcommand.Arg;
 import se.ranzdo.bukkit.methodcommand.Command;
+import se.ranzdo.bukkit.methodcommand.Wildcard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,19 +72,83 @@ public class TitleCommand {
     }
 
     @Command(identifier = "whisper", onlyPlayers = true)
-    public void whisperCommand(Player sender, @Arg(name = "player") Player target, @Arg(name = "message") String
-            message) {
-        PlayerData playerData = plugin.getPlayerDataMap().get(target.getUniqueId());
-        if (playerData == null) {
-            playerData = new PlayerData(target.getUniqueId());
+    public void whisperCommand(Player sender, @Arg(name = "player") Player target,
+                               @Arg(name = "message") @Wildcard String message) {
+        PlayerData targetData = plugin.getPlayerDataMap().get(target.getUniqueId());
+        if (targetData == null) {
+            targetData = new PlayerData(target.getUniqueId());
         }
-        List<String> ignores = playerData.getIgnoreList();
+        PlayerData senderData = plugin.getPlayerDataMap().get(sender.getUniqueId());
+        if (senderData == null) {
+            senderData = new PlayerData(sender.getUniqueId());
+        }
+        List<String> ignores = targetData.getIgnoreList();
         if (ignores.contains(sender.getUniqueId().toString())) {
             MessageUtils.sendMessage(sender, ChatColor.RED + "Message not sent. This player has ignored you.");
-        } else {
-            MessageUtils.sendMessage(target, ChatColor.LIGHT_PURPLE + sender.getName() + ": " + message);
-            MessageUtils.sendMessage(sender, ChatColor.DARK_PURPLE + "To " + sender.getName() + ": " + message);
+            return;
         }
+        MessageUtils.sendMessage(target, ChatColor.LIGHT_PURPLE + sender.getName() + ": " + message);
+        MessageUtils.sendMessage(sender, ChatColor.DARK_PURPLE + "To " + sender.getName() + ": " + message);
+        senderData.setLastWhisperTo(target.getUniqueId());
+        targetData.setLastWhisperFrom(sender.getUniqueId());
+        plugin.getPlayerDataMap().put(sender.getUniqueId(), senderData);
+        plugin.getPlayerDataMap().put(target.getUniqueId(), targetData);
+    }
+
+    @Command(identifier = "reply", onlyPlayers = true)
+    public void replyCommand(Player sender, @Arg(name = "message") @Wildcard String message) {
+        PlayerData senderData = plugin.getPlayerDataMap().get(sender.getUniqueId());
+        if (senderData == null) {
+            senderData = new PlayerData(sender.getUniqueId());
+        }
+        if (senderData.getLastWhisperFrom() == null) {
+            MessageUtils.sendMessage(sender, ChatColor.RED + "Nobody has messaged you recently.");
+            return;
+        }
+        Player target = Bukkit.getPlayer(senderData.getLastWhisperFrom());
+        PlayerData targetData = plugin.getPlayerDataMap().get(target.getUniqueId());
+        if (targetData == null) {
+            targetData = new PlayerData(target.getUniqueId());
+        }
+        List<String> ignores = targetData.getIgnoreList();
+        if (ignores.contains(sender.getUniqueId().toString())) {
+            MessageUtils.sendMessage(sender, ChatColor.RED + "Message not sent. This player has ignored you.");
+            return;
+        }
+        MessageUtils.sendMessage(target, ChatColor.LIGHT_PURPLE + sender.getName() + ": " + message);
+        MessageUtils.sendMessage(sender, ChatColor.DARK_PURPLE + "To " + sender.getName() + ": " + message);
+        senderData.setLastWhisperTo(target.getUniqueId());
+        targetData.setLastWhisperFrom(sender.getUniqueId());
+        plugin.getPlayerDataMap().put(sender.getUniqueId(), senderData);
+        plugin.getPlayerDataMap().put(target.getUniqueId(), targetData);
+    }
+
+    @Command(identifier = "continue", onlyPlayers = true)
+    public void continueCommand(Player sender, @Arg(name = "message") @Wildcard String message) {
+        PlayerData senderData = plugin.getPlayerDataMap().get(sender.getUniqueId());
+        if (senderData == null) {
+            senderData = new PlayerData(sender.getUniqueId());
+        }
+        if (senderData.getLastWhisperTo() == null) {
+            MessageUtils.sendMessage(sender, ChatColor.RED + "You have not messaged anyone recently.");
+            return;
+        }
+        Player target = Bukkit.getPlayer(senderData.getLastWhisperTo());
+        PlayerData targetData = plugin.getPlayerDataMap().get(target.getUniqueId());
+        if (targetData == null) {
+            targetData = new PlayerData(target.getUniqueId());
+        }
+        List<String> ignores = targetData.getIgnoreList();
+        if (ignores.contains(sender.getUniqueId().toString())) {
+            MessageUtils.sendMessage(sender, ChatColor.RED + "Message not sent. This player has ignored you.");
+            return;
+        }
+        MessageUtils.sendMessage(target, ChatColor.LIGHT_PURPLE + sender.getName() + ": " + message);
+        MessageUtils.sendMessage(sender, ChatColor.DARK_PURPLE + "To " + sender.getName() + ": " + message);
+        senderData.setLastWhisperTo(target.getUniqueId());
+        targetData.setLastWhisperFrom(sender.getUniqueId());
+        plugin.getPlayerDataMap().put(sender.getUniqueId(), senderData);
+        plugin.getPlayerDataMap().put(target.getUniqueId(), targetData);
     }
 
     private List<String> getTitles(Player player) {
