@@ -14,5 +14,7 @@ permissions:
 commands:
   title:
     aliases: []
+  whisper:
+    aliases: [w, tell, pm, message, msg]
   ignore:
     aliases: [ign]

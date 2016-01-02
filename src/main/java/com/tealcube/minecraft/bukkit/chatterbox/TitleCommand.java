@@ -75,7 +75,7 @@ public class TitleCommand {
         plugin.getPlayerDataMap().put(sender.getUniqueId(), playerData);
     }
 
-    @Command(identifier = "w", onlyPlayers = true)
+    @Command(identifier = "whisper", onlyPlayers = true)
     public void whisperCommand(Player sender, @Arg(name = "player") Player target, @Arg(name = "message") String
             message) {
         PlayerData playerData = plugin.getPlayerDataMap().get(target.getUniqueId());
