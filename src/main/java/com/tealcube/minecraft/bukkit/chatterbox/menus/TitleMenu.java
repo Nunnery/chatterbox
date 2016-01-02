@@ -28,6 +28,7 @@ import com.tealcube.minecraft.bukkit.chatterbox.titles.GroupData;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.Cnly.BusyInv.BusyInv.items.MenuOpenItem;
@@ -35,13 +36,24 @@ import io.github.Cnly.BusyInv.BusyInv.menus.ChestMenu;
 
 public class TitleMenu extends ChestMenu {
 
+    private final ChatterboxPlugin plugin;
+
     public TitleMenu(ChatterboxPlugin plugin, GroupData groupData) {
         super(ChatColor.BLACK + "Title Select!", null, ChestSize.fit(groupData.getTitles().size()));
-        setItem(0, new MenuOpenItem(this, ChatColor.BLACK + "Pick a Group!", new ItemStack(Material.REDSTONE)));
+        this.plugin = plugin;
         int counter = 1;
         for (String title : groupData.getTitles()) {
             setItem(counter++, new TitleItem(title));
         }
     }
 
+    @Override
+    public void onMenuOpen(InventoryOpenEvent e) {
+        super.onMenuOpen(e);
+        GroupMenu groupMenu = plugin.getPlayerGroupMenuMap().get(e.getPlayer().getUniqueId());
+        if (groupMenu == null) {
+            return;
+        }
+        setItem(0, new MenuOpenItem(groupMenu, "Go Back", new ItemStack(Material.REDSTONE)));
+    }
 }
