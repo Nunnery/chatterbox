@@ -285,6 +285,7 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
             }
             String s = splitMessage.get(i);
             String str = ChatColor.stripColor(s);
+            debug("Player (" + event.getPlayer().getName() + "): str = " + str);
             if (str.equalsIgnoreCase(player.getDisplayName() + ":")) {
                 String lev = ChatColor.WHITE + player.getName() + " - Level " + player.getLevel();
                 String[] rankDesc = TextUtils.color(group.getRankDescription()).toArray(
