@@ -1,4 +1,6 @@
-version: "0.0.1"
+version: "0.0.2"
 debug: false
 format: "%title-color%%title% <white>%name%: %chatcolor%%message%"
+whisper-to-format: "<darkpurple>To %name%: %chatcolor%%message%"
+whisper-from-format: "<lightpurple>From %name%: %chatcolor%%message%"
 default-title: "Nerd"

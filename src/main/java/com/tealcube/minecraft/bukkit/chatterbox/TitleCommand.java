@@ -23,7 +23,6 @@
 package com.tealcube.minecraft.bukkit.chatterbox;
 
 import com.tealcube.minecraft.bukkit.chatterbox.menus.GroupMenu;
-import com.tealcube.minecraft.bukkit.chatterbox.titles.GroupData;
 import com.tealcube.minecraft.bukkit.chatterbox.titles.PlayerData;
 import com.tealcube.minecraft.bukkit.facecore.utilities.MessageUtils;
 
@@ -35,9 +34,7 @@ import se.ranzdo.bukkit.methodcommand.Arg;
 import se.ranzdo.bukkit.methodcommand.Command;
 import se.ranzdo.bukkit.methodcommand.Wildcard;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class TitleCommand {
 
@@ -93,12 +90,7 @@ public class TitleCommand {
             MessageUtils.sendMessage(sender, ChatColor.RED + "Message not sent. This player has ignored you.");
             return;
         }
-        MessageUtils.sendMessage(target, ChatColor.LIGHT_PURPLE + sender.getName() + ": " + message);
-        MessageUtils.sendMessage(sender, ChatColor.DARK_PURPLE + "To " + sender.getName() + ": " + message);
-        senderData.setLastWhisperTo(target.getUniqueId());
-        targetData.setLastWhisperFrom(sender.getUniqueId());
-        plugin.getPlayerDataMap().put(sender.getUniqueId(), senderData);
-        plugin.getPlayerDataMap().put(target.getUniqueId(), targetData);
+        plugin.sendWhisper(sender, target, message);
     }
 
     @Command(identifier = "reply", onlyPlayers = true)
@@ -112,6 +104,10 @@ public class TitleCommand {
             return;
         }
         Player target = Bukkit.getPlayer(senderData.getLastWhisperFrom());
+        if (target == null || !target.isOnline()) {
+            MessageUtils.sendMessage(sender, ChatColor.RED + "Cannot whisper them now.");
+            return;
+        }
         PlayerData targetData = plugin.getPlayerDataMap().get(target.getUniqueId());
         if (targetData == null) {
             targetData = new PlayerData(target.getUniqueId());
@@ -121,12 +117,7 @@ public class TitleCommand {
             MessageUtils.sendMessage(sender, ChatColor.RED + "Message not sent. This player has ignored you.");
             return;
         }
-        MessageUtils.sendMessage(target, ChatColor.LIGHT_PURPLE + sender.getName() + ": " + message);
-        MessageUtils.sendMessage(sender, ChatColor.DARK_PURPLE + "To " + sender.getName() + ": " + message);
-        senderData.setLastWhisperTo(target.getUniqueId());
-        targetData.setLastWhisperFrom(sender.getUniqueId());
-        plugin.getPlayerDataMap().put(sender.getUniqueId(), senderData);
-        plugin.getPlayerDataMap().put(target.getUniqueId(), targetData);
+        plugin.sendWhisper(sender, target, message);
     }
 
     @Command(identifier = "continue", onlyPlayers = true)
@@ -140,6 +131,10 @@ public class TitleCommand {
             return;
         }
         Player target = Bukkit.getPlayer(senderData.getLastWhisperTo());
+        if (target == null || !target.isOnline()) {
+            MessageUtils.sendMessage(sender, ChatColor.RED + "Cannot whisper them now.");
+            return;
+        }
         PlayerData targetData = plugin.getPlayerDataMap().get(target.getUniqueId());
         if (targetData == null) {
             targetData = new PlayerData(target.getUniqueId());
@@ -149,35 +144,7 @@ public class TitleCommand {
             MessageUtils.sendMessage(sender, ChatColor.RED + "Message not sent. This player has ignored you.");
             return;
         }
-        MessageUtils.sendMessage(target, ChatColor.LIGHT_PURPLE + sender.getName() + ": " + message);
-        MessageUtils.sendMessage(sender, ChatColor.DARK_PURPLE + "To " + sender.getName() + ": " + message);
-        senderData.setLastWhisperTo(target.getUniqueId());
-        targetData.setLastWhisperFrom(sender.getUniqueId());
-        plugin.getPlayerDataMap().put(sender.getUniqueId(), senderData);
-        plugin.getPlayerDataMap().put(target.getUniqueId(), targetData);
-    }
-
-    private List<String> getTitles(Player player) {
-        List<String> titles = new ArrayList<>();
-        for (Map.Entry<String, GroupData> entry : plugin.getGroupDataMap().entrySet()) {
-            if (player.hasPermission("chatterbox.group." + entry.getKey())) {
-                titles.addAll(entry.getValue().getTitles());
-            }
-        }
-        return titles;
-    }
-
-    private String getTitleGroup(Player player) {
-        String titleGroup = "";
-        int lastWeight = 0;
-        for (Map.Entry<String, GroupData> entry : plugin.getGroupDataMap().entrySet()) {
-            if (player.hasPermission("chatterbox.group." + entry.getKey()) && entry.getValue().getWeight() >
-                    lastWeight) {
-                titleGroup = entry.getKey();
-                lastWeight = entry.getValue().getWeight();
-            }
-        }
-        return titleGroup;
+        plugin.sendWhisper(sender, target, message);
     }
 
 }

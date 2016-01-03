@@ -1,24 +1,18 @@
 /**
- * The MIT License
- * Copyright (c) 2015 Teal Cube Games
+ * The MIT License Copyright (c) 2015 Teal Cube Games
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.tealcube.minecraft.bukkit.chatterbox;
 
@@ -36,6 +30,7 @@ import com.tealcube.minecraft.bukkit.config.VersionedSmartYamlConfiguration;
 import com.tealcube.minecraft.bukkit.facecore.apache.validator.routines.UrlValidator;
 import com.tealcube.minecraft.bukkit.facecore.logging.PluginLogger;
 import com.tealcube.minecraft.bukkit.facecore.plugin.FacePlugin;
+import com.tealcube.minecraft.bukkit.facecore.utilities.MessageUtils;
 import com.tealcube.minecraft.bukkit.hilt.HiltItemStack;
 import com.tealcube.minecraft.bukkit.shade.fanciful.FancyMessage;
 import com.tealcube.minecraft.bukkit.shade.google.common.base.Splitter;
@@ -272,65 +267,7 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         Player player = event.getPlayer();
         Set<Player> receivers = event.getRecipients();
         String message = event.getMessage();
-        String newFormat = formatMessage(player, message);
-        GroupData group = getGroupData(player);
-        List<String> splitMessage = Splitter.on(" ").splitToList(newFormat);
-        FancyMessage messageParts = new FancyMessage("");
-        ChatColor color = ChatColor.GRAY;
-        String title = playerDataMap.containsKey(player.getUniqueId()) ? playerDataMap.get(player.getUniqueId())
-                .getTitle() : settings.getString("config.default-title");
-        for (int i = 0; i < splitMessage.size(); i++) {
-            if (i == 2) {
-                color = ChatColor.getByChar(splitMessage.get(i).substring(1, 2));
-            }
-            String s = splitMessage.get(i);
-            String str = ChatColor.stripColor(s);
-            debug("Player (" + event.getPlayer().getName() + "): str = " + str);
-            if (str.equalsIgnoreCase(player.getDisplayName() + ":")) {
-                String lev = ChatColor.WHITE + player.getName() + " - Level " + player.getLevel();
-                String[] rankDesc = TextUtils.color(group.getRankDescription()).toArray(
-                        new String[group.getRankDescription().size()]);
-                String[] titleDesc = TextUtils.color(group.getTitleDescription()).toArray(
-                        new String[group.getTitleDescription().size()]);
-                messageParts.then(s).tooltip(StringUtils.concat(StringUtils.concat(lev, rankDesc), titleDesc));
-            } else if (str.startsWith("{")) {
-                if (str.equalsIgnoreCase("{hand}") || str.equalsIgnoreCase("{item}")) {
-                    ItemStack hand = player.getEquipment().getItemInHand();
-                    HiltItemStack hHand = (hand != null && hand.getType() != Material.AIR) ? new HiltItemStack(hand) : null;
-                    if (hHand != null) {
-                        String name = ChatColor.stripColor(hHand.getName());
-                        name = name.substring(0, Math.min(name.length(), 24));
-                        if (hHand.getName().contains("\u00A7")) {
-                            messageParts.then(hHand.getName().substring(0, 2) + "[" + name + "]").itemTooltip(hHand);
-                        } else {
-                            messageParts.then("[" + name + "]").itemTooltip(hHand);
-                        }
-                    } else {
-                        messageParts.then("[Nothing..?]");
-                    }
-                }
-            } else if (validator.isValid(str)) {
-                messageParts.then("[Link]").color(ChatColor.AQUA).link(str).tooltip(str);
-            } else if (validator.isValid("http://" + str)) {
-                messageParts.then("[Link]").color(ChatColor.AQUA).link("http://" + str).tooltip("http://" + str);
-            } else {
-                messageParts.then(TextUtils.color(color + s));
-            }
-            if (i != splitMessage.size() - 1) {
-                messageParts.then(" ");
-            }
-        }
-        messageParts.send(Bukkit.getConsoleSender());
-        for (Player receiver : receivers) {
-            PlayerData playerData = getPlayerDataMap().get(receiver.getUniqueId());
-            if (playerData == null) {
-                continue;
-            }
-            if (playerData.getIgnoreList().contains(player.getUniqueId().toString())) {
-                continue;
-            }
-            messageParts.send(receiver);
-        }
+        sendChat(player, receivers, message);
     }
 
     public Map<UUID, PlayerData> getPlayerDataMap() {
@@ -355,11 +292,10 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         return group;
     }
 
-    private String formatMessage(Player player, String message) {
+    private String formatMessage(Player player, String message, String template) {
         GroupData group = getGroupData(player);
         String title = playerDataMap.containsKey(player.getUniqueId()) ? playerDataMap.get(player.getUniqueId())
                 .getTitle() : settings.getString("config.default-title");
-        String template = settings.getString("config.format");
         return TextUtils.args(template, new String[][]{
                 {"%name%", player.getDisplayName()},
                 {"%message%", message},
@@ -395,4 +331,107 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
     public Map<UUID, GroupMenu> getPlayerGroupMenuMap() {
         return playerGroupMenuMap;
     }
+
+    private FancyMessage prepareMessage(Player sender, GroupData group, List<String> splitMessage) {
+        FancyMessage messageParts = new FancyMessage("");
+        ChatColor color = ChatColor.GRAY;
+        for (int i = 0; i < splitMessage.size(); i++) {
+            if (i == 2) {
+                color = ChatColor.getByChar(splitMessage.get(i).substring(1, 2));
+            }
+            String s = splitMessage.get(i);
+            String str = ChatColor.stripColor(s);
+            debug("Player (" + sender.getName() + "): str = " + str);
+            if (str.equalsIgnoreCase(sender.getDisplayName() + ":")) {
+                String lev = ChatColor.WHITE + sender.getName() + " - Level " + sender.getLevel();
+                String[] rankDesc = TextUtils.color(group.getRankDescription()).toArray(
+                        new String[group.getRankDescription().size()]);
+                String[] titleDesc = TextUtils.color(group.getTitleDescription()).toArray(
+                        new String[group.getTitleDescription().size()]);
+                messageParts.then(s).tooltip(StringUtils.concat(StringUtils.concat(lev, rankDesc), titleDesc));
+            } else if (str.startsWith("{")) {
+                if (str.equalsIgnoreCase("{hand}") || str.equalsIgnoreCase("{item}")) {
+                    ItemStack hand = sender.getEquipment().getItemInHand();
+                    HiltItemStack hHand = (hand != null && hand.getType() != Material.AIR) ? new HiltItemStack(hand) : null;
+                    if (hHand != null) {
+                        String name = ChatColor.stripColor(hHand.getName());
+                        name = name.substring(0, Math.min(name.length(), 24));
+                        if (hHand.getName().contains("\u00A7")) {
+                            messageParts.then(hHand.getName().substring(0, 2) + "[" + name + "]").itemTooltip(hHand);
+                        } else {
+                            messageParts.then("[" + name + "]").itemTooltip(hHand);
+                        }
+                    } else {
+                        messageParts.then("[Nothing..?]");
+                    }
+                }
+            } else if (validator.isValid(str)) {
+                messageParts.then("[Link]").color(ChatColor.AQUA).link(str).tooltip(str);
+            } else if (validator.isValid("http://" + str)) {
+                messageParts.then("[Link]").color(ChatColor.AQUA).link("http://" + str).tooltip("http://" + str);
+            } else {
+                messageParts.then(TextUtils.color(color + s));
+            }
+            if (i != splitMessage.size() - 1) {
+                messageParts.then(" ");
+            }
+        }
+        return messageParts;
+    }
+
+    public void sendWhisper(Player sender, Player target, String message) {
+        PlayerData senderData = getPlayerDataMap().get(sender.getUniqueId());
+        if (senderData == null) {
+            senderData = new PlayerData(sender.getUniqueId());
+            getPlayerDataMap().put(sender.getUniqueId(), senderData);
+        }
+        PlayerData targetData = getPlayerDataMap().get(target.getUniqueId());
+        if (targetData == null) {
+            targetData = new PlayerData(target.getUniqueId());
+            getPlayerDataMap().put(target.getUniqueId(), targetData);
+        }
+        if (targetData.getIgnoreList().contains(sender.getUniqueId().toString())) {
+            MessageUtils.sendMessage(sender, ChatColor.RED + "Message not sent. This player has ignored you.");
+            return;
+        }
+
+        String toTemplate = settings.getString("config.whisper-to-format");
+        String fromTemplate = settings.getString("config.whisper-from-format");
+        String toFormat = formatMessage(target, message, toTemplate);
+        String fromFormat = formatMessage(sender, message, fromTemplate);
+        GroupData toGroup = getGroupData(target);
+        GroupData fromGroup = getGroupData(sender);
+        List<String> splitToMessage = Splitter.on(" ").splitToList(toFormat);
+        List<String> splitFromMessage = Splitter.on(" ").splitToList(fromFormat);
+        FancyMessage toMessageParts = prepareMessage(target, toGroup, splitToMessage);
+        FancyMessage fromMessageParts = prepareMessage(sender, fromGroup, splitFromMessage);
+        Bukkit.getConsoleSender().sendMessage(
+                String.format("%s -> %s: %s", sender.getName(), target.getName(), message));
+        toMessageParts.send(sender);
+        fromMessageParts.send(target);
+    }
+
+    public void sendChat(Player sender, Set<Player> targets, String message) {
+        String template = settings.getString("config.format");
+        String format = formatMessage(sender, message, template);
+        GroupData groupData = getGroupData(sender);
+        List<String> splitMessage = Splitter.on(" ").splitToList(format);
+        FancyMessage messageParts = prepareMessage(sender, groupData, splitMessage);
+        messageParts.send(Bukkit.getConsoleSender());
+        for (Player receiver : targets) {
+            if (receiver.equals(sender)) {
+                continue;
+            }
+            PlayerData playerData = getPlayerDataMap().get(receiver.getUniqueId());
+            if (playerData == null) {
+                continue;
+            }
+            if (playerData.getIgnoreList().contains(sender.getUniqueId().toString())) {
+                continue;
+            }
+            messageParts.send(receiver);
+        }
+        messageParts.send(sender);
+    }
+
 }
