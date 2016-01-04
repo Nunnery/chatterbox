@@ -342,25 +342,29 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         FancyMessage messageParts = new FancyMessage("");
         ChatColor color = ChatColor.GRAY;
         for (int i = 0; i < splitMessage.size(); i++) {
-            if (i == 2) {
-                color = ChatColor.getByChar(splitMessage.get(i).substring(1, 2));
-            }
-            String s = splitMessage.get(i);
+            String s = TextUtils.color(splitMessage.get(i));
             String str = ChatColor.stripColor(s);
-            debug("Player (" + sender.getName() + "): str = " + str);
-            if (str.equalsIgnoreCase(sender.getDisplayName() + ":")) {
-                String lev = ChatColor.WHITE + sender.getName() + " - Level " + sender.getLevel();
-                String[] rankDesc = TextUtils.color(group.getRankDescription()).toArray(
-                        new String[group.getRankDescription().size()]);
-                String[] titleDesc = TextUtils.color(group.getTitleDescription()).toArray(
-                        new String[group.getTitleDescription().size()]);
-                messageParts.then(s).tooltip(StringUtils.concat(StringUtils.concat(lev, rankDesc), titleDesc));
+            if (i == 0) {
+                messageParts.then(s).tooltip(
+                        "" + TextUtils.color(group.getRankDescription().get(0)),
+                        "" + TextUtils.color(group.getTitleDescription().get(0)),
+                        "" + TextUtils.color(group.getTitleDescription().get(1))
+                );
+            } else if (i == 1) {
+                messageParts.then(s).tooltip(
+                        ChatColor.WHITE + "" + ChatColor.BOLD + ChatColor.UNDERLINE + sender.getDisplayName() + "'s " +
+                                "Info",
+                        ChatColor.GOLD + "Rank: " + ChatColor.WHITE + chat.getPrimaryGroup(sender),
+                        ChatColor.GOLD + "Guild: " + ChatColor.WHITE + "N/A",
+                        ChatColor.GOLD + "Level: " + ChatColor.WHITE + sender.getLevel()
+                );
             } else if (str.startsWith("{")) {
                 if (str.equalsIgnoreCase("{hand}") || str.equalsIgnoreCase("{item}")) {
                     ItemStack hand = sender.getEquipment().getItemInHand();
                     HiltItemStack hHand = (hand != null && hand.getType() != Material.AIR) ? new HiltItemStack(hand) : null;
                     if (hHand != null) {
                         String name = ChatColor.stripColor(hHand.getName());
+                        name = name.replace(" ", "");
                         name = name.substring(0, Math.min(name.length(), 24));
                         if (hHand.getName().contains("\u00A7")) {
                             messageParts.then(hHand.getName().substring(0, 2) + "[" + name + "]").itemTooltip(hHand);
@@ -376,6 +380,9 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
             } else if (validator.isValid("http://" + str)) {
                 messageParts.then("[Link]").color(ChatColor.AQUA).link("http://" + str).tooltip("http://" + str);
             } else {
+                if (i == 2) {
+                    color = ChatColor.getByChar(splitMessage.get(i).substring(1, 2));
+                }
                 messageParts.then(TextUtils.color(color + s));
             }
             if (i != splitMessage.size() - 1) {
