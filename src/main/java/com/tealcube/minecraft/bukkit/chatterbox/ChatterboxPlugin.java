@@ -22,6 +22,7 @@
  */
 package com.tealcube.minecraft.bukkit.chatterbox;
 
+import com.stealthyone.mcb.mcml.MCMLBuilder;
 import com.tealcube.minecraft.bukkit.CaselessMap;
 import com.tealcube.minecraft.bukkit.TextUtils;
 import com.tealcube.minecraft.bukkit.chatterbox.menus.GroupMenu;
@@ -37,15 +38,12 @@ import com.tealcube.minecraft.bukkit.facecore.apache.validator.routines.UrlValid
 import com.tealcube.minecraft.bukkit.facecore.logging.PluginLogger;
 import com.tealcube.minecraft.bukkit.facecore.plugin.FacePlugin;
 import com.tealcube.minecraft.bukkit.facecore.utilities.MessageUtils;
-import com.tealcube.minecraft.bukkit.hilt.HiltItemStack;
 import com.tealcube.minecraft.bukkit.shade.fanciful.FancyMessage;
-import com.tealcube.minecraft.bukkit.shade.google.common.base.Splitter;
 
 import net.milkbowl.vault.chat.Chat;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -55,7 +53,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import se.ranzdo.bukkit.methodcommand.CommandHandler;
@@ -298,17 +295,38 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         return group;
     }
 
-    private String formatMessage(Player player, String message, String template) {
+    private String createName(Player player) {
+        GroupData group = getGroupData(player);
+        String lev = ChatColor.WHITE + player.getName() + " - Level " + player.getLevel();
+        String[] rankDesc = TextUtils.color(group.getRankDescription()).toArray(
+                new String[group.getRankDescription().size()]);
+        String[] titleDesc = TextUtils.color(group.getTitleDescription()).toArray(
+                new String[group.getTitleDescription().size()]);
+        StringBuilder builder = new StringBuilder("[").append(player.getDisplayName()).append("](txt:").append(lev)
+                .append(");");
+        for (String s : rankDesc) {
+            builder.append("(txt:").append(s).append(");");
+        }
+        for (String s : titleDesc) {
+            builder.append("(txt:").append(s).append(");");
+        }
+        return builder.toString();
+    }
+
+    private MCMLBuilder formatMessage(Player player, String message, String template) {
         GroupData group = getGroupData(player);
         String title = playerDataMap.containsKey(player.getUniqueId()) ? playerDataMap.get(player.getUniqueId())
                 .getTitle() : settings.getString("config.default-title");
-        return TextUtils.args(template, new String[][]{
-                {"%name%", player.getDisplayName()},
-                {"%message%", message},
-                {"%title-color%", group.getTitleColor() + ""},
-                {"%chatcolor%", group.getChatColor() + ""},
-                {"%title%", title}
-        });
+        Map<String, Object> replacements = new HashMap<>();
+        replacements.put("%name%", createName(player));
+        replacements.put("%message%", message);
+        replacements.put("%title-color%", group.getTitleColor() + "");
+        replacements.put("%chatcolor%", group.getChatColor() + "");
+        replacements.put("%title%", title);
+        replacements.put("{hand}", "(itm:%hand%);");
+        replacements.put("{item}", "(itm:%hand%);");
+        replacements.put("%hand%", player.getItemInHand());
+        return new MCMLBuilder(template, replacements);
     }
 
     public String getTitleGroup(Player player) {
@@ -338,6 +356,7 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         return playerGroupMenuMap;
     }
 
+    /*
     private FancyMessage prepareMessage(Player sender, GroupData group, List<String> splitMessage) {
         FancyMessage messageParts = new FancyMessage("");
         ChatColor color = ChatColor.GRAY;
@@ -391,6 +410,7 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
         }
         return messageParts;
     }
+    */
 
     public void sendWhisper(Player sender, Player target, String message) {
         PlayerData senderData = getPlayerDataMap().get(sender.getUniqueId());
@@ -410,26 +430,18 @@ public class ChatterboxPlugin extends FacePlugin implements Listener {
 
         String toTemplate = settings.getString("config.whisper-to-format");
         String fromTemplate = settings.getString("config.whisper-from-format");
-        String toFormat = formatMessage(target, message, toTemplate);
-        String fromFormat = formatMessage(sender, message, fromTemplate);
-        GroupData toGroup = getGroupData(target);
-        GroupData fromGroup = getGroupData(sender);
-        List<String> splitToMessage = Splitter.on(" ").splitToList(toFormat);
-        List<String> splitFromMessage = Splitter.on(" ").splitToList(fromFormat);
-        FancyMessage toMessageParts = prepareMessage(target, toGroup, splitToMessage);
-        FancyMessage fromMessageParts = prepareMessage(sender, fromGroup, splitFromMessage);
+        MCMLBuilder toFormat = formatMessage(target, message, toTemplate);
+        MCMLBuilder fromFormat = formatMessage(sender, message, fromTemplate);
         Bukkit.getConsoleSender().sendMessage(
                 String.format("%s -> %s: %s", sender.getName(), target.getName(), message));
-        toMessageParts.send(sender);
-        fromMessageParts.send(target);
+        toFormat.getFancyMessage().send(target);
+        fromFormat.getFancyMessage().send(sender);
     }
 
     public void sendChat(Player sender, Set<Player> targets, String message) {
         String template = settings.getString("config.format");
-        String format = formatMessage(sender, message, template);
-        GroupData groupData = getGroupData(sender);
-        List<String> splitMessage = Splitter.on(" ").splitToList(format);
-        FancyMessage messageParts = prepareMessage(sender, groupData, splitMessage);
+        MCMLBuilder format = formatMessage(sender, message, template);
+        FancyMessage messageParts = format.getFancyMessage();
         messageParts.send(Bukkit.getConsoleSender());
         for (Player receiver : targets) {
             if (receiver.equals(sender)) {
