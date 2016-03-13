@@ -38,7 +38,6 @@ import com.tealcube.minecraft.bukkit.facecore.apache.validator.routines.UrlValid
 import com.tealcube.minecraft.bukkit.facecore.logging.PluginLogger;
 import com.tealcube.minecraft.bukkit.facecore.plugin.FacePlugin;
 import com.tealcube.minecraft.bukkit.facecore.utilities.MessageUtils;
-import com.tealcube.minecraft.bukkit.shade.fanciful.FancyMessage;
 
 import net.milkbowl.vault.chat.Chat;
 
@@ -66,6 +65,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
+
+import mkremins.fanciful.FancyMessage;
 
 public class ChatterboxPlugin extends FacePlugin implements Listener {
 
